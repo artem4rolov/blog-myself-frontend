@@ -1,12 +1,12 @@
 import React from "react";
-import Header from "../../components/Header/Header";
+import FullPost from "../../components/FullPost/FullPost";
 import Post from "../../components/Post/Post";
 
 const Home = () => {
   return (
     <>
-      <Header />
-      <Post />
+      {/* <Post /> */}
+      <FullPost />
     </>
   );
 };

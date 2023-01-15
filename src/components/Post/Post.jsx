@@ -6,33 +6,34 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Grid } from "@mui/material";
+import BookmarksIcon from "@mui/icons-material/Bookmarks";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-export default function Post() {
+import img from "../../assets/img/image.png";
+
+const Post = () => {
+  const user = true;
+
   const posts = [
     {
       title: "first",
       text: "first",
-      image: "https://source.unsplash.com/random",
     },
     {
       title: "second",
       text: "second",
-      image: "https://source.unsplash.com/random",
     },
     {
       title: "third",
       text: "third",
-      image: "https://source.unsplash.com/random",
     },
     {
       title: "fourth",
       text: "fourth",
-      image: "https://source.unsplash.com/random",
     },
     {
       title: "fifth",
       text: "fifth",
-      image: "https://source.unsplash.com/random",
     },
   ];
 
@@ -41,11 +42,7 @@ export default function Post() {
       {posts.map((post) => (
         <Grid item key={post.title} xs={12} sm={6} md={4}>
           <Card sx={{ maxWidth: "100%" }}>
-            <CardMedia
-              sx={{ height: 140 }}
-              image={post.image}
-              title={post.title}
-            />
+            <CardMedia sx={{ height: 140 }} image={img} title={post.title} />
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
                 {post.text}
@@ -56,13 +53,28 @@ export default function Post() {
               </Typography>
             </CardContent>
             <CardActions>
-              <Button size="small">Share</Button>
-              <Button size="small">Learn More</Button>
+              {user ? (
+                <>
+                  <Button
+                    size="small"
+                    color="success"
+                    startIcon={<BookmarksIcon />}
+                  >
+                    В избранное
+                  </Button>
+                  <Button size="small" color="error" startIcon={<DeleteIcon />}>
+                    Удалить
+                  </Button>
+                </>
+              ) : (
+                <Button size="small">Подробнее</Button>
+              )}
             </CardActions>
           </Card>
-          ;
         </Grid>
       ))}
     </Grid>
   );
-}
+};
+
+export default Post;

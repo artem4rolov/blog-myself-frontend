@@ -38,7 +38,7 @@ const Header = () => {
           </>
         )}
       </Toolbar>
-      <Toolbar sx={{ borderBottom: 1 }}>
+      <Toolbar sx={{ borderBottom: 1, borderColor: "transparent" }}>
         <Typography
           component="h2"
           variant="h5"
@@ -47,10 +47,10 @@ const Header = () => {
           noWrap
           sx={{ flex: 1 }}
         >
-          <Button variant="outlined" startIcon={<BarChartIcon />}>
+          <Button size="small" startIcon={<BarChartIcon />}>
             Популярные
           </Button>
-          <Button variant="outlined" startIcon={<BookmarksIcon />}>
+          <Button size="small" color="success" startIcon={<BookmarksIcon />}>
             Избранное
           </Button>
         </Typography>
