@@ -5,9 +5,10 @@ import Typography from "@mui/material/Typography";
 import { Avatar } from "@mui/material";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
+import { Link, NavLink } from "react-router-dom";
 
 const Header = () => {
-  const user = true;
+  const user = false;
 
   return (
     <>
@@ -25,7 +26,9 @@ const Header = () => {
           noWrap
           sx={{ flex: 1 }}
         >
-          <Button>Blog</Button>
+          <Link to="/">
+            <Button>Blog</Button>
+          </Link>
         </Typography>
         {user ? (
           <>
@@ -34,28 +37,35 @@ const Header = () => {
           </>
         ) : (
           <>
-            <Button>Регистрация</Button>
-            <Button>Войти</Button>
+            <NavLink to="/register">
+              <Button>Регистрация</Button>
+            </NavLink>
+            <NavLink to="/login">
+              <Button>Войти</Button>
+            </NavLink>
           </>
         )}
       </Toolbar>
-      <Toolbar sx={{ borderBottom: 1, borderColor: "transparent" }}>
-        <Typography
-          component="h2"
-          variant="h5"
-          color="inherit"
-          align="left"
-          noWrap
-          sx={{ flex: 1 }}
-        >
-          <Button size="small" startIcon={<BarChartIcon />}>
-            Популярные
-          </Button>
-          <Button size="small" color="success" startIcon={<BookmarksIcon />}>
-            Избранное
-          </Button>
-        </Typography>
-      </Toolbar>
+      {/* если пользователь вошел - показываем кнопки по сортировке */}
+      {user ? (
+        <Toolbar sx={{ borderBottom: 1, borderColor: "transparent" }}>
+          <Typography
+            component="h2"
+            variant="h5"
+            color="inherit"
+            align="left"
+            noWrap
+            sx={{ flex: 1 }}
+          >
+            <Button size="small" startIcon={<BarChartIcon />}>
+              Популярные
+            </Button>
+            <Button size="small" color="success" startIcon={<BookmarksIcon />}>
+              Избранное
+            </Button>
+          </Typography>
+        </Toolbar>
+      ) : null}
     </>
   );
 };

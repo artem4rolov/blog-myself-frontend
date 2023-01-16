@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.10.5",
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.11.0",
+    "@mui/joy": "^5.0.0-alpha.62",
     "@mui/material": "^5.11.4",
     "dompurify": "^2.4.3",
     "draft-convert": "^2.1.13",
@@ -22,6 +23,7 @@
     "react-dom": "^18.2.0",
     "react-draft-wysiwyg": "^1.15.0",
     "react-markdown": "^8.0.4",
+    "react-router-dom": "^6.6.2",
     "sass": "^1.57.1"
   },
   "devDependencies": {

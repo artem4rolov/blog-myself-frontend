@@ -8,6 +8,7 @@ import ReactMarkdown from "react-markdown";
 
 import img from "../../assets/img/image.png";
 import { Container } from "@mui/material";
+import Comment from "../Comment/Comment";
 
 const FullPost = () => {
   const post = {
@@ -74,6 +75,7 @@ const FullPost = () => {
       <Container maxWidth="lg">
         <ReactMarkdown>{post.text}</ReactMarkdown>
       </Container>
+      <Comment />
     </>
   );
 };
