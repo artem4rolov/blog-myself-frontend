@@ -7,7 +7,7 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 
 const Header = () => {
-  const user = false;
+  const user = true;
 
   return (
     <>
@@ -29,6 +29,7 @@ const Header = () => {
         </Typography>
         {user ? (
           <>
+            <Button>Создать пост</Button>
             <Button color="error">Выйти</Button>
           </>
         ) : (
