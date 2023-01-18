@@ -10,7 +10,7 @@ const Home = () => {
       <Routes>
         <Route path="/" element={<Post />} />
         <Route path="/post/:id" element={<FullPost />} />
-        <Route path="/post/add" element={<AddPost />} />
+        <Route path="/post/add-post" element={<AddPost />} />
       </Routes>
     </>
   );

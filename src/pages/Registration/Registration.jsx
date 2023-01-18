@@ -49,11 +49,12 @@ const Registration = () => {
             sx={{ mt: 1 }}
           >
             <Button
-              type="add__avatar"
-              fullWidth
               variant="contained"
+              component="label"
+              fullWidth
               sx={{ mt: 3, mb: 2 }}
             >
+              <input hidden accept="image/*" multiple type="file" />
               Добавить аватар
             </Button>
             <TextField
@@ -63,7 +64,6 @@ const Registration = () => {
               id="user__name"
               label="Ваше имя"
               name="user__name"
-              autoComplete="user__name"
               autoFocus
             />
             <TextField
@@ -74,7 +74,6 @@ const Registration = () => {
               label="E-mail"
               name="email"
               autoComplete="email"
-              autoFocus
             />
             <TextField
               margin="normal"
