@@ -1,4 +1,7 @@
 import * as React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../../redux/slices/users/authActions";
+
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,14 +17,24 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 const theme = createTheme();
 
 const Registration = () => {
+  const dispatch = useDispatch();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
-      user__name: data.get("user__name"),
+      user_name: data.get("user_name"),
       email: data.get("email"),
       password: data.get("password"),
     });
+    // отправляем на бэк объект со свойствами email и password и с соответствующими ключами
+    dispatch(
+      registerUser({
+        user_name: data.get("user_name"),
+        email: data.get("email"),
+        password: data.get("password"),
+      })
+    );
   };
 
   return (
@@ -61,9 +74,9 @@ const Registration = () => {
               margin="normal"
               required
               fullWidth
-              id="user__name"
+              id="user_name"
               label="Ваше имя"
-              name="user__name"
+              name="user_name"
               autoFocus
             />
             <TextField
