@@ -14,13 +14,19 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
+import { useNavigate } from "react-router-dom";
+import { CircularProgress, LinearProgress } from "@mui/material";
+import { ButtonRoot } from "@mui/joy/Button/Button";
+
 const theme = createTheme();
 
 const Login = () => {
-  const { loading, userInfo, error, success } = useSelector(
+  // достаем переменные из redux
+  const { loading, userEmail, error, success } = useSelector(
     (state) => state.auth
   );
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -31,9 +37,16 @@ const Login = () => {
     );
   };
 
+  // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
+  React.useEffect(() => {
+    if (success) {
+      navigate("/");
+    }
+  }, [userEmail]);
+
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container maxWidth="xs">
         <CssBaseline />
         <Box
           sx={{
@@ -76,12 +89,13 @@ const Login = () => {
               autoComplete="current-password"
             />
             <Button
+              disabled={loading}
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Войти
+              {loading ? "Авторизация..." : "Вход"}
             </Button>
             <Grid container>
               <Grid item>

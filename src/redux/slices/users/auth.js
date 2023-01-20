@@ -3,11 +3,19 @@ import { createSlice } from "@reduxjs/toolkit";
 import { userLogin } from "./authActions";
 import { registerUser } from "./authActions";
 
+// если есть токен в localStorage - забираем его
+const userToken = localStorage.getItem("userToken")
+  ? localStorage.getItem("userToken")
+  : null;
+
 const initialState = {
-  loading: false,
-  userInfo: {}, // for user object
-  error: null,
-  success: false, // for monitoring the registration process.
+  loading: false, // отображение загрузки
+  userId: null, // id пользователя
+  userName: null, // имя пользователя
+  userEmail: null, // email пользоватея
+  userToken, // токен авторизации (jwt token)
+  error: null, // ошибки
+  success: false, // успешна ли авторизация или регистрация
 };
 
 const authSlice = createSlice({
@@ -23,7 +31,10 @@ const authSlice = createSlice({
     [userLogin.fulfilled]: (state, { payload }) => {
       state.loading = false;
       state.success = true;
-      state.userInfo = payload;
+      state.userName = payload.user_name;
+      state.userEmail = payload.email;
+      state.userToken = payload.token;
+      state.userId = payload._id;
     },
     [userLogin.rejected]: (state, { payload }) => {
       state.loading = false;

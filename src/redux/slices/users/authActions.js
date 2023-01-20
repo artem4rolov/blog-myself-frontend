@@ -59,5 +59,5 @@ export const registerUser = createAsyncThunk(
     }
   }
 );
-
+// authMe (проверка calStorage на наличие token jwt)
 // выход
