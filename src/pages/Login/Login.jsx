@@ -39,10 +39,12 @@ const Login = () => {
 
   // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
   React.useEffect(() => {
-    if (userToken && successLogin) {
+    if (successLogin) {
       navigate("/");
     }
-  }, [userEmail]);
+  }, [successLogin]);
+
+  console.log(error);
 
   return (
     <ThemeProvider theme={theme}>
@@ -78,6 +80,17 @@ const Login = () => {
               autoComplete="email"
               autoFocus
             />
+            {error && (
+              <Typography
+                component="h5"
+                variant="h5"
+                color="inherit"
+                align="center"
+                sx={{ color: "red" }}
+              >
+                {error ? error.email : null}
+              </Typography>
+            )}
             <TextField
               margin="normal"
               required
@@ -88,8 +101,19 @@ const Login = () => {
               id="password"
               autoComplete="current-password"
             />
+            {error && (
+              <Typography
+                component="h5"
+                variant="h5"
+                color="inherit"
+                align="center"
+                sx={{ color: "red" }}
+              >
+                {error ? error.password : null}
+              </Typography>
+            )}
             <Button
-              disabled={loading}
+              disabled={loading && !error}
               type="submit"
               fullWidth
               variant="contained"
@@ -99,7 +123,7 @@ const Login = () => {
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="#" variant="body2" align="center">
                   {"Нет аккаунта? Зарегистрируйтесь"}
                 </Link>
               </Grid>

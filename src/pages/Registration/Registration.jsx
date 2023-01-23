@@ -54,6 +54,8 @@ const Registration = () => {
     }
   }, [loading]);
 
+  console.log(error);
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -68,7 +70,7 @@ const Registration = () => {
         >
           {open ? (
             <Typography component="h1" variant="h5">
-              Регистрация успешна! Вы можете{" "}
+              Регистрация успешна! Вы можете
               <NavLink to="/login">
                 <Button>Войти</Button>
               </NavLink>
@@ -105,6 +107,17 @@ const Registration = () => {
                   name="user_name"
                   autoFocus
                 />
+                {error && (
+                  <Typography
+                    component="h5"
+                    variant="h5"
+                    color="inherit"
+                    align="center"
+                    sx={{ color: "red" }}
+                  >
+                    {error ? error.user_name : null}
+                  </Typography>
+                )}
                 <TextField
                   margin="normal"
                   required
@@ -114,6 +127,17 @@ const Registration = () => {
                   name="email"
                   autoComplete="email"
                 />
+                {error && (
+                  <Typography
+                    component="h5"
+                    variant="h5"
+                    color="inherit"
+                    align="center"
+                    sx={{ color: "red" }}
+                  >
+                    {error ? error.email : null}
+                  </Typography>
+                )}
                 <TextField
                   margin="normal"
                   required
@@ -124,8 +148,19 @@ const Registration = () => {
                   id="password"
                   autoComplete="current-password"
                 />
+                {error && (
+                  <Typography
+                    component="h5"
+                    variant="h5"
+                    color="inherit"
+                    align="center"
+                    sx={{ color: "red" }}
+                  >
+                    {error ? error.password : null}
+                  </Typography>
+                )}
                 <Button
-                  disabled={loading}
+                  disabled={loading && error}
                   type="submit"
                   fullWidth
                   variant="contained"

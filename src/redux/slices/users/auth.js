@@ -25,7 +25,14 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      // ...logout reducer
+      localStorage.removeItem("userToken"); // deletes token from storage
+      state.loading = false;
+      state.userId = null;
+      state.userName = null;
+      state.userEmail = null;
+      state.userToken = null;
+      state.successLogin = false;
+      state.successRegister = false;
     },
     // обновляем каждые 15 минут (в Header.jsx) данные о пользователе, чтобы не сбрасывать аутентификацию
     setCredentials: (state, { payload }) => {
@@ -47,7 +54,8 @@ const authSlice = createSlice({
       state.successLogin = true;
       state.userName = payload.user_name;
       state.userEmail = payload.email;
-      state.userId = payload.user_id;
+      state.userId = payload._id;
+      state.error = payload;
     },
     [userLogin.rejected]: (state, { payload }) => {
       state.loading = false;
@@ -60,6 +68,7 @@ const authSlice = createSlice({
     },
     [registerUser.fulfilled]: (state, { payload }) => {
       state.loading = false;
+      state.error = payload;
       // state.userInfo = payload;
       state.successRegister = true; // регистрация успешна - можем войти в систему
     },

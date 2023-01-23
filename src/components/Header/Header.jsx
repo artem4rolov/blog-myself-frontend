@@ -6,10 +6,10 @@ import { Avatar } from "@mui/material";
 import { Link, NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetUserDetailsQuery } from "../../services/authService";
-import { setCredentials } from "../../redux/slices/users/auth";
+import { logout, setCredentials } from "../../redux/slices/users/auth";
 
 const Header = () => {
-  const { loading, userEmail, error, successRegister } = useSelector(
+  const { loading, userEmail, error, successLogin } = useSelector(
     (state) => state.auth
   );
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const Header = () => {
   // автоматически аутентифицируем пользователя, если найден jwt токен в заголовке запроса
   const { data, isFetching } = useGetUserDetailsQuery("userDetails", {
     // делаем повторный запрос каждые 15 минут
-    pollingInterval: 9000,
+    pollingInterval: 90000,
   });
 
   React.useEffect(() => {
@@ -51,7 +51,9 @@ const Header = () => {
               <Button>Создать пост</Button>
             </Link>
             <Link to="/login">
-              <Button color="error">Выйти</Button>
+              <Button onClick={() => dispatch(logout())} color="error">
+                Выйти
+              </Button>
             </Link>
           </>
         ) : (
