@@ -5,12 +5,13 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Grid, Toolbar } from "@mui/material";
+import { Divider, Grid, Toolbar } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 
 import img from "../../assets/img/image.png";
+import { CardOverflow } from "@mui/joy";
 
 const Post = () => {
   const user = false;
@@ -101,6 +102,30 @@ const Post = () => {
                   <Button size="small">Подробнее</Button>
                 )}
               </CardActions>
+              <CardOverflow
+                variant="soft"
+                sx={{
+                  display: "flex",
+                  gap: 1.5,
+                  py: 1.5,
+                  px: "var(--Card-padding)",
+                  bgcolor: "background.level1",
+                }}
+              >
+                <Typography
+                  level="body3"
+                  sx={{ fontWeight: "md", color: "text.secondary" }}
+                >
+                  6.3k views
+                </Typography>
+                <Divider orientation="vertical" />
+                <Typography
+                  level="body3"
+                  sx={{ fontWeight: "md", color: "text.secondary" }}
+                >
+                  1 hour ago
+                </Typography>
+              </CardOverflow>
             </Card>
           </Grid>
         ))}

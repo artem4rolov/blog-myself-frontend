@@ -1,6 +1,7 @@
-// features/auth/authSlice.js
 import { createSlice } from "@reduxjs/toolkit";
+// функция авторизации
 import { userLogin } from "./authActions";
+// функция регистрации
 import { registerUser } from "./authActions";
 
 // если есть токен в localStorage - забираем его
@@ -15,13 +16,26 @@ const initialState = {
   userEmail: null, // email пользоватея
   userToken, // токен авторизации (jwt token)
   error: null, // ошибки
-  success: false, // успешна ли авторизация или регистрация
+  successLogin: false, // успешна ли авторизация
+  successRegister: false, // успешна ли регистрация
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      // ...logout reducer
+    },
+    // обновляем каждые 15 минут (в Header.jsx) данные о пользователе, чтобы не сбрасывать аутентификацию
+    setCredentials: (state, { payload }) => {
+      state.loading = false;
+      state.successLogin = true;
+      state.userName = payload.user_name;
+      state.userEmail = payload.email;
+      state.userId = payload.user_id;
+    },
+  },
   extraReducers: {
     // АВТОРИЗАЦИЯ
     [userLogin.pending]: (state) => {
@@ -30,11 +44,10 @@ const authSlice = createSlice({
     },
     [userLogin.fulfilled]: (state, { payload }) => {
       state.loading = false;
-      state.success = true;
+      state.successLogin = true;
       state.userName = payload.user_name;
       state.userEmail = payload.email;
-      state.userToken = payload.token;
-      state.userId = payload._id;
+      state.userId = payload.user_id;
     },
     [userLogin.rejected]: (state, { payload }) => {
       state.loading = false;
@@ -48,7 +61,7 @@ const authSlice = createSlice({
     [registerUser.fulfilled]: (state, { payload }) => {
       state.loading = false;
       // state.userInfo = payload;
-      state.success = true; // регистрация успешна - можем войти в систему
+      state.successRegister = true; // регистрация успешна - можем войти в систему
     },
     [registerUser.rejected]: (state, { payload }) => {
       state.loading = false;
@@ -57,4 +70,5 @@ const authSlice = createSlice({
   },
 });
 
+export const { logout, setCredentials } = authSlice.actions;
 export default authSlice.reducer;

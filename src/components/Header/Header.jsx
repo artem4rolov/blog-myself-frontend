@@ -4,14 +4,31 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Avatar } from "@mui/material";
 import { Link, NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useGetUserDetailsQuery } from "../../services/authService";
+import { setCredentials } from "../../redux/slices/users/auth";
 
 const Header = () => {
-  const user = false;
+  const { loading, userEmail, error, successRegister } = useSelector(
+    (state) => state.auth
+  );
+  const dispatch = useDispatch();
+
+  // автоматически аутентифицируем пользователя, если найден jwt токен в заголовке запроса
+  const { data, isFetching } = useGetUserDetailsQuery("userDetails", {
+    // делаем повторный запрос каждые 15 минут
+    pollingInterval: 9000,
+  });
+
+  React.useEffect(() => {
+    // если есть данные о пользователе из заголовоков запроса - заносим эти данные в store Redux, чтобы не сбрасывать аутентификацию пользователя
+    if (data) dispatch(setCredentials(data));
+  }, [data, dispatch]);
 
   return (
     <>
       <Toolbar sx={{ borderBottom: 0, borderColor: "none" }}>
-        {user ? (
+        {userEmail ? (
           <>
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
           </>
@@ -28,7 +45,7 @@ const Header = () => {
             <Button>Blog</Button>
           </Link>
         </Typography>
-        {user ? (
+        {userEmail ? (
           <>
             <Link to="post/add-post">
               <Button>Создать пост</Button>

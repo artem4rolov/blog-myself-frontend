@@ -22,7 +22,7 @@ const theme = createTheme();
 
 const Login = () => {
   // достаем переменные из redux
-  const { loading, userEmail, error, success } = useSelector(
+  const { loading, userEmail, error, successLogin, userToken } = useSelector(
     (state) => state.auth
   );
   const dispatch = useDispatch();
@@ -39,7 +39,7 @@ const Login = () => {
 
   // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
   React.useEffect(() => {
-    if (success) {
+    if (userToken && successLogin) {
       navigate("/");
     }
   }, [userEmail]);
