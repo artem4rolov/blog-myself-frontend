@@ -38,12 +38,10 @@ const Login = () => {
   };
   React.useEffect(() => {
     // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
-    if (successLogin && error == null) {
+    if (successLogin && error.login == null) {
       navigate("/");
     }
   }, [successLogin]);
-
-  console.log(typeof error.login);
 
   return (
     <ThemeProvider theme={theme}>

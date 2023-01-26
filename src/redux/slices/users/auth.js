@@ -33,7 +33,8 @@ const authSlice = createSlice({
       state.userToken = null;
       state.successLogin = false;
       state.successRegister = false;
-      state.error = null;
+      state.error.login = null;
+      state.error.register = null;
     },
     // обновляем каждые 15 минут (в Header.jsx) данные о пользователе, чтобы не сбрасывать аутентификацию
     setCredentials: (state, { payload }) => {

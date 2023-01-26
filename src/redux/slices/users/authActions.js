@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// authActions.js
+// бэкенд по адресу
 const backendURL = "http://localhost:5000";
 
 // вход
