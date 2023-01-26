@@ -28,7 +28,7 @@ const Header = () => {
   return (
     <>
       <Toolbar sx={{ borderBottom: 0, borderColor: "none" }}>
-        {userEmail ? (
+        {userEmail && error == null ? (
           <>
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
           </>
@@ -45,7 +45,7 @@ const Header = () => {
             <Button>Blog</Button>
           </Link>
         </Typography>
-        {userEmail ? (
+        {userEmail && error == null ? (
           <>
             <Link to="post/add-post">
               <Button>Создать пост</Button>

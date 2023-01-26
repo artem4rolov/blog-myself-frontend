@@ -26,11 +26,9 @@ export const userLogin = createAsyncThunk(
     } catch (error) {
       // возвращаем текст ошибки, если она есть
       if (error.response && error.response.data.message) {
-        rejectWithValue(error.response.data.message);
-        return error.response.data.message;
+        return rejectWithValue(error.response.data.message);
       } else {
-        rejectWithValue(error.message);
-        return error.message;
+        return rejectWithValue(error.message);
       }
     }
   }

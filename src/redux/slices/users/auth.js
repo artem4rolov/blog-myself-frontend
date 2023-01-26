@@ -15,7 +15,7 @@ const initialState = {
   userName: null, // имя пользователя
   userEmail: null, // email пользоватея
   userToken, // токен авторизации (jwt token)
-  error: null, // ошибки
+  error: { login: null, register: null }, // ошибки
   successLogin: false, // успешна ли авторизация
   successRegister: false, // успешна ли регистрация
 };
@@ -33,6 +33,7 @@ const authSlice = createSlice({
       state.userToken = null;
       state.successLogin = false;
       state.successRegister = false;
+      state.error = null;
     },
     // обновляем каждые 15 минут (в Header.jsx) данные о пользователе, чтобы не сбрасывать аутентификацию
     setCredentials: (state, { payload }) => {
@@ -47,7 +48,8 @@ const authSlice = createSlice({
     // АВТОРИЗАЦИЯ
     [userLogin.pending]: (state) => {
       state.loading = true;
-      state.error = null;
+      state.error.login = null;
+      state.error.register = null;
     },
     [userLogin.fulfilled]: (state, { payload }) => {
       state.loading = false;
@@ -55,26 +57,25 @@ const authSlice = createSlice({
       state.userName = payload.user_name;
       state.userEmail = payload.email;
       state.userId = payload._id;
-      state.error = payload;
     },
     [userLogin.rejected]: (state, { payload }) => {
       state.loading = false;
-      state.error = payload;
+      state.error.login = payload;
     },
     // РЕГИСТРАЦИЯ
     [registerUser.pending]: (state) => {
       state.loading = true;
-      state.error = null;
+      state.error.login = null;
+      state.error.register = null;
     },
     [registerUser.fulfilled]: (state, { payload }) => {
       state.loading = false;
-      state.error = payload;
-      // state.userInfo = payload;
+      state.error.register = payload;
       state.successRegister = true; // регистрация успешна - можем войти в систему
     },
     [registerUser.rejected]: (state, { payload }) => {
       state.loading = false;
-      state.error = payload;
+      state.error.register = payload;
     },
   },
 });

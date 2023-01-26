@@ -50,11 +50,9 @@ const Registration = () => {
 
       setTimeout(() => {
         setOpen(false);
-      }, 3000);
+      }, 5000);
     }
   }, [loading]);
-
-  console.log(error);
 
   return (
     <ThemeProvider theme={theme}>
@@ -68,13 +66,29 @@ const Registration = () => {
             alignItems: "center",
           }}
         >
-          {open ? (
-            <Typography component="h1" variant="h5">
-              Регистрация успешна! Вы можете
+          {open && !error.register ? (
+            <Box
+              sx={{
+                marginTop: 25,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                fontSize: "24px",
+              }}
+            >
+              <Typography
+                sx={{ textAlign: "center" }}
+                component="h2"
+                variant="h5"
+              >
+                Регистрация успешна!
+              </Typography>
               <NavLink to="/login">
-                <Button>Войти</Button>
+                <Button sx={{ fontSize: "24px" }} size="lg">
+                  Войти
+                </Button>
               </NavLink>
-            </Typography>
+            </Box>
           ) : (
             <>
               <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
@@ -107,7 +121,7 @@ const Registration = () => {
                   name="user_name"
                   autoFocus
                 />
-                {error && (
+                {error.register && (
                   <Typography
                     component="h5"
                     variant="h5"
@@ -115,7 +129,7 @@ const Registration = () => {
                     align="center"
                     sx={{ color: "red" }}
                   >
-                    {error ? error.user_name : null}
+                    {error.register ? error.register.user_name : null}
                   </Typography>
                 )}
                 <TextField
@@ -127,7 +141,7 @@ const Registration = () => {
                   name="email"
                   autoComplete="email"
                 />
-                {error && (
+                {error.register && (
                   <Typography
                     component="h5"
                     variant="h5"
@@ -135,7 +149,7 @@ const Registration = () => {
                     align="center"
                     sx={{ color: "red" }}
                   >
-                    {error ? error.email : null}
+                    {error.register ? error.register.email : null}
                   </Typography>
                 )}
                 <TextField
@@ -148,7 +162,7 @@ const Registration = () => {
                   id="password"
                   autoComplete="current-password"
                 />
-                {error && (
+                {error.register && (
                   <Typography
                     component="h5"
                     variant="h5"
@@ -156,11 +170,11 @@ const Registration = () => {
                     align="center"
                     sx={{ color: "red" }}
                   >
-                    {error ? error.password : null}
+                    {error.register ? error.register.password : null}
                   </Typography>
                 )}
                 <Button
-                  disabled={loading && error}
+                  disabled={loading && !error.register}
                   type="submit"
                   fullWidth
                   variant="contained"
@@ -168,6 +182,18 @@ const Registration = () => {
                 >
                   {loading ? "Регистрация..." : "Зарегистрироваться"}
                 </Button>
+                {/* Нам приходят разные ошибки с бэка - если объект - выводим каждое значение ошибки под соответствующим инпутом, а если строка - выводим ее внизу под кнопкой */}
+                {typeof error.register === "string" ? (
+                  <Typography
+                    component="h5"
+                    variant="h5"
+                    color="inherit"
+                    align="center"
+                    sx={{ color: "red" }}
+                  >
+                    {error.register}
+                  </Typography>
+                ) : null}
                 <Grid container>
                   <Grid item>
                     <Link href="#" variant="body2">

@@ -36,15 +36,14 @@ const Login = () => {
       userLogin({ email: data.get("email"), password: data.get("password") })
     );
   };
-
-  // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
   React.useEffect(() => {
-    if (successLogin) {
+    // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
+    if (successLogin && error == null) {
       navigate("/");
     }
   }, [successLogin]);
 
-  console.log(error);
+  console.log(typeof error.login);
 
   return (
     <ThemeProvider theme={theme}>
@@ -80,7 +79,7 @@ const Login = () => {
               autoComplete="email"
               autoFocus
             />
-            {error && (
+            {error.login && (
               <Typography
                 component="h5"
                 variant="h5"
@@ -88,7 +87,7 @@ const Login = () => {
                 align="center"
                 sx={{ color: "red" }}
               >
-                {error ? error.email : null}
+                {error.login ? error.login.email : null}
               </Typography>
             )}
             <TextField
@@ -101,7 +100,7 @@ const Login = () => {
               id="password"
               autoComplete="current-password"
             />
-            {error && (
+            {error.login && (
               <Typography
                 component="h5"
                 variant="h5"
@@ -109,11 +108,11 @@ const Login = () => {
                 align="center"
                 sx={{ color: "red" }}
               >
-                {error ? error.password : null}
+                {error.login ? error.login.password : null}
               </Typography>
             )}
             <Button
-              disabled={loading && !error}
+              disabled={loading && !error.login}
               type="submit"
               fullWidth
               variant="contained"
@@ -121,6 +120,18 @@ const Login = () => {
             >
               {loading ? "Авторизация..." : "Вход"}
             </Button>
+            {/* Нам приходят разные ошибки с бэка - если объект - выводим каждое значение ошибки под соответствующим инпутом, а если строка - выводим ее внизу под кнопкой */}
+            {typeof error.login === "string" ? (
+              <Typography
+                component="h5"
+                variant="h5"
+                color="inherit"
+                align="center"
+                sx={{ color: "red" }}
+              >
+                {error.login}
+              </Typography>
+            ) : null}
             <Grid container>
               <Grid item>
                 <Link href="#" variant="body2" align="center">
