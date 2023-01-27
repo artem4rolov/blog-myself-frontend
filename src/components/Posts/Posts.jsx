@@ -4,7 +4,7 @@ import { getPosts } from "../../redux/slices/posts/postsActions";
 
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Grid, Toolbar } from "@mui/material";
+import { Container, Grid, Toolbar } from "@mui/material";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import PostModel from "./PostModel";
@@ -17,6 +17,7 @@ const Post = () => {
     (state) => state.auth
   );
 
+  // как только компонент готов - получаем посты с бэка (не зависит от авторизации)
   React.useEffect(() => {
     dispatch(getPosts());
   }, []);
@@ -24,7 +25,7 @@ const Post = () => {
   console.log(posts);
 
   return (
-    <>
+    <Container maxWidth="lg">
       {/* если пользователь вошел - показываем кнопки по сортировке */}
       {userEmail && successLogin ? (
         <Toolbar
@@ -55,6 +56,7 @@ const Post = () => {
           ? posts.map((post) => (
               <Grid item key={post.title} xs={12} sm={6} md={4}>
                 <PostModel
+                  key={post._id}
                   post={post}
                   userEmail={userEmail}
                   successLogin={successLogin}
@@ -63,7 +65,7 @@ const Post = () => {
             ))
           : "Не удалось получить посты"}
       </Grid>
-    </>
+    </Container>
   );
 };
 

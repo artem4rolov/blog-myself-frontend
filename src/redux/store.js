@@ -7,8 +7,10 @@ import { authService } from "../services/authService";
 
 const store = configureStore({
   reducer: {
+    // авторизация
     auth: authReducer,
     [authService.reducerPath]: authService.reducer,
+    // посты
     posts: postsReducer,
   },
   // явно указываем, что наш authService является middleware для нашего store

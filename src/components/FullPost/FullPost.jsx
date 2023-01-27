@@ -1,50 +1,77 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { getPostById } from "../../redux/slices/posts/postsActions";
-
+import {
+  getPostById,
+  getCommentsOfPost,
+} from "../../redux/slices/posts/postsActions";
+// UI
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
-import ReactMarkdown from "react-markdown";
-
-import img from "../../assets/img/image.png";
 import { Container } from "@mui/material";
-import Comment from "../Comment/Comment";
+import { Button } from "@mui/joy";
+
+// end UI
+import img from "../../assets/img/image.png";
+import getFormattedDate from "../../services/getFormattedDate";
+import GetComments from "../Comments/GetComments";
+import AddComment from "../Comments/AddComment";
 
 const FullPost = () => {
   const dispatch = useDispatch();
-  const postId = useParams();
+  const { id } = useParams();
+
+  const { loading, currentPost, comments, error } = useSelector(
+    (state) => state.posts
+  );
 
   React.useEffect(() => {
-    dispatch(getPostById(postId));
-  });
-
-  const { loading, currentPost, error } = useSelector((state) => state.posts);
-
-  const { userName, userEmail, successLogin } = useSelector(
-    (state) => state.auth
-  );
+    dispatch(getPostById(id));
+    dispatch(getCommentsOfPost(id));
+  }, []);
 
   return (
     currentPost && (
-      <>
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          {/* Дата поста */}
+          <Box>
+            <Typography sx={{ color: "#9a9a9a", mb: 2 }}>
+              {getFormattedDate(currentPost.date)}
+            </Typography>
+          </Box>
+
+          {/* <Button size="md" variant="soft" color="info">
+            {currentPost.author.split("@")[0]}
+          </Button> */}
+
+          <Box>
+            <Typography sx={{ color: "#9a9a9a" }}>
+              Просмотров: {currentPost.viewCount}
+            </Typography>
+          </Box>
+        </Box>
         <Paper
           sx={{
             position: "relative",
             backgroundColor: "grey.800",
             color: "#fff",
             minHeight: "400px",
-            mb: 6,
+            mb: 2,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
             backgroundImage: `url(${img})`,
           }}
         >
-          {/* Increase the priority of the hero background image */}
           {<img style={{ display: "none" }} src={img} alt="post image" />}
           <Box
             sx={{
@@ -70,25 +97,33 @@ const FullPost = () => {
                   variant="h3"
                   color="inherit"
                   gutterBottom
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                    marginTop: "25%",
+                  }}
+                  // заголовок на фоне картинки
                 >
                   {currentPost.title}
                 </Typography>
-                <Typography variant="h5" color="inherit" paragraph>
-                  {currentPost.title}
-                </Typography>
-                <Link variant="subtitle1" href="#">
-                  {currentPost.body}
-                </Link>
               </Box>
             </Grid>
           </Grid>
         </Paper>
 
-        <Container maxWidth="lg">
-          <ReactMarkdown>{currentPost.body}</ReactMarkdown>
-        </Container>
-        <Comment />
-      </>
+        {/* Текст поста */}
+        <Typography sx={{ marginBottom: "20px" }} variant="h5">
+          {/* <ReactMarkdown>{currentPost.body}</ReactMarkdown> */}
+          {currentPost.body}
+        </Typography>
+
+        {/* Оставить комментарий */}
+        <AddComment />
+
+        <GetComments />
+      </Container>
     )
   );
 };
