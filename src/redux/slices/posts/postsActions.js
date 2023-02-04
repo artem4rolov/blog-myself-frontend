@@ -24,6 +24,33 @@ export const getPostById = createAsyncThunk("posts/getPostById", async (id) => {
   }
 });
 
+// создать пост
+export const createPost = createAsyncThunk(
+  "posts/createPost",
+  async (formData) => {
+    try {
+      const token = localStorage.getItem("userToken");
+      if (token) {
+        const config = {
+          headers: {
+            token: `${token}`,
+          },
+        };
+        const { data } = await axios.post(
+          `${backendURL}/api/posts/create`,
+          formData,
+          config
+        );
+        return data;
+      } else {
+        return new Error("Токен авторизации не получен");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
 // получить все комменты конкретного поста
 export const getCommentsOfPost = createAsyncThunk(
   "posts/getCommentsOfPost",
@@ -67,6 +94,37 @@ export const createCommentOfPost = createAsyncThunk(
   }
 );
 
+// удалить конкретный пост
+export const deletePost = createAsyncThunk(
+  "posts/deletePost",
+  async ({ postId }) => {
+    try {
+      // берем токен из локального хранилища
+      const token = localStorage.getItem("userToken");
+      if (token) {
+        const config = {
+          headers: {
+            // токен нужен обязательно, поскольку только автор комментария может удалить свой комментарий
+            token: `${token}`,
+          },
+        };
+        await axios.delete(
+          `${backendURL}/api/posts/delete/${postId}`,
+          // передавать никаких данных на бэк не нужно - достаточно просто указать роут и конфиг запроса (в который добавили токен авторизации)
+          // { id },
+          config
+        );
+        // возвращать при удалении также ничего не нужно
+        // return data;
+      } else {
+        return new Error("Токен авторизации не получен");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
 // удалить конкретный коммент конкретного поста
 export const deleteCommentOfPost = createAsyncThunk(
   "posts/deleteCommentOfPost",
@@ -77,7 +135,6 @@ export const deleteCommentOfPost = createAsyncThunk(
       if (token) {
         const config = {
           headers: {
-            // при удалении не нужно обозначать тип отправляемых данных, поскольку мы ничего не отправляем, а лишь обозначаем действие на бэке по конкретному роуту
             "Content-Type": "application/json",
             // токен нужен обязательно, поскольку только автор комментария может удалить свой комментарий
             token: `${token}`,

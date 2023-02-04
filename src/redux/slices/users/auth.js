@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 // функция авторизации
-import { userLogin } from "./authActions";
+import { editProfileUser, userLogin } from "./authActions";
 // функция регистрации
 import { registerUser } from "./authActions";
 
@@ -13,6 +13,7 @@ const initialState = {
   loading: false, // отображение загрузки
   userId: null, // id пользователя
   userName: null, // имя пользователя
+  userImg: null, // аватар пользователя
   userEmail: null, // email пользоватея
   userToken, // токен авторизации (jwt token)
   error: { login: null, register: null }, // ошибки
@@ -30,11 +31,12 @@ const authSlice = createSlice({
       state.userId = null;
       state.userName = null;
       state.userEmail = null;
-      state.userToken = null;
+      // state.userToken = null;
       state.successLogin = false;
       state.successRegister = false;
-      state.error.login = null;
+      // state.error.login = null;
       state.error.register = null;
+      state.userImg = null;
     },
     // обновляем каждые 15 минут (в Header.jsx) данные о пользователе, чтобы не сбрасывать аутентификацию
     setCredentials: (state, { payload }) => {
@@ -43,6 +45,7 @@ const authSlice = createSlice({
       state.userName = payload.user_name;
       state.userEmail = payload.email;
       state.userId = payload.user_id;
+      state.userImg = payload.avatar;
     },
   },
   extraReducers: {
@@ -58,6 +61,10 @@ const authSlice = createSlice({
       state.userName = payload.user_name;
       state.userEmail = payload.email;
       state.userId = payload._id;
+      state.userImg = payload.avatar;
+      state.userToken = localStorage.getItem("userToken")
+        ? localStorage.getItem("userToken")
+        : null;
     },
     [userLogin.rejected]: (state, { payload }) => {
       state.loading = false;
@@ -71,12 +78,31 @@ const authSlice = createSlice({
     },
     [registerUser.fulfilled]: (state, { payload }) => {
       state.loading = false;
-      state.error.register = payload;
+      state.error.register = payload.message;
       state.successRegister = true; // регистрация успешна - можем войти в систему
     },
     [registerUser.rejected]: (state, { payload }) => {
       state.loading = false;
       state.error.register = payload;
+    },
+    // ОБНОВЛЕНИЕ ПРОФИЛЯ
+    [editProfileUser.pending]: (state) => {
+      state.loading = true;
+      state.error.login = null;
+      state.error.register = null;
+    },
+    [editProfileUser.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.successLogin = true;
+      state.userName = payload.user_name;
+      state.userImg = payload.avatar;
+      state.userToken = localStorage.getItem("userToken")
+        ? localStorage.getItem("userToken")
+        : null;
+    },
+    [editProfileUser.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.error = payload;
     },
   },
 });

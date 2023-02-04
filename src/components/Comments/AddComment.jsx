@@ -2,7 +2,6 @@ import * as React from "react";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
 import FormControl from "@mui/joy/FormControl";
-import FormLabel from "@mui/joy/FormLabel";
 import Textarea from "@mui/joy/Textarea";
 import IconButton from "@mui/joy/IconButton";
 import Menu from "@mui/joy/Menu";
@@ -15,8 +14,8 @@ import Check from "@mui/icons-material/Check";
 import SendIcon from "@mui/icons-material/Send";
 import { CssVarsProvider } from "@mui/joy/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 import { createCommentOfPost } from "../../redux/slices/posts/postsActions";
+import { NavLink } from "react-router-dom";
 
 const AddComment = () => {
   // параметры шрифта при создании коммента
@@ -28,6 +27,10 @@ const AddComment = () => {
 
   const { loading, currentPost, comments, error } = useSelector(
     (state) => state.posts
+  );
+
+  const { userName, userEmail, successLogin } = useSelector(
+    (state) => state.auth
   );
 
   const dispatch = useDispatch();
@@ -110,7 +113,11 @@ const AddComment = () => {
                 sx={{ ml: "auto" }}
                 type="submit"
               >
-                Отправить
+                {successLogin && userEmail ? (
+                  "Отправить"
+                ) : (
+                  <NavLink to="/login">Авторизуйтесь</NavLink>
+                )}
               </Button>
             </Box>
           }

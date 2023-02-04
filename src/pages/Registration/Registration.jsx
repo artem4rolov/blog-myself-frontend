@@ -6,7 +6,6 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -22,6 +21,7 @@ const theme = createTheme();
 const Registration = () => {
   // стейт для модалки
   const [open, setOpen] = React.useState(false);
+  const [img, setImg] = React.useState(null);
   // достаем переменные из redux
   const { loading, userEmail, error, successRegister } = useSelector(
     (state) => state.auth
@@ -29,18 +29,20 @@ const Registration = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const createAvatar = (e) => {
+    e.preventDefault();
+    setImg(e.target.files[0]);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    const formData = new FormData(event.currentTarget);
     // отправляем на бэк объект со свойствами email и password и с соответствующими ключами
-    dispatch(
-      registerUser({
-        user_name: data.get("user_name"),
-        email: data.get("email"),
-        password: data.get("password"),
-      })
-    );
+    formData.append("avatar", img);
+    dispatch(registerUser(formData));
   };
+
+  // console.log(img);
 
   // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
   React.useEffect(() => {
@@ -60,7 +62,7 @@ const Registration = () => {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 0,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -109,7 +111,13 @@ const Registration = () => {
                   fullWidth
                   sx={{ mt: 3, mb: 2 }}
                 >
-                  <input hidden accept="image/*" multiple type="file" />
+                  <input
+                    hidden
+                    accept="image/*"
+                    multiple
+                    type="file"
+                    onChange={(e) => createAvatar(e)}
+                  />
                   Добавить аватар
                 </Button>
                 <TextField
@@ -196,9 +204,7 @@ const Registration = () => {
                 ) : null}
                 <Grid container>
                   <Grid item>
-                    <Link href="#" variant="body2">
-                      {"Есть аккаунт? Войдите"}
-                    </Link>
+                    <NavLink to="/login">{"Есть аккаунт? Войдите"}</NavLink>
                   </Grid>
                 </Grid>
               </Box>

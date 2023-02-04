@@ -10,64 +10,77 @@ import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import DOMPurify from "dompurify";
 
 import { CssVarsProvider } from "@mui/joy/styles";
 import getFormattedDate from "../../services/getFormattedDate";
 import { Box, Button } from "@mui/joy";
+import { deletePost } from "../../redux/slices/posts/postsActions";
+import { useDispatch, useSelector } from "react-redux";
 
-const PostModel = ({ post, userEmail, successLogin }) => {
+import default_post from "../../assets/img/default_post.svg";
+
+// создаем правильную разметку будущего поста
+function createMarkup(html) {
+  return {
+    __html: DOMPurify.sanitize(html),
+  };
+}
+
+const PostModel = ({ post }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { loading, userEmail, userName, successLogin } = useSelector(
+    (state) => state.auth
+  );
+
+  const handleDeletePost = (id) => {
+    dispatch(deletePost({ postId: id }));
+  };
 
   return (
     <CssVarsProvider>
-      <Card
-        variant="outlined"
-        sx={{
-          // width: "100%",
-          cursor: "pointer",
-          ":hover": {
-            boxShadow: "1px solid black",
-          },
-        }}
-        // открываем конкретный пост по id
-        onClick={() => navigate(`/post/${post._id}`)}
-      >
+      <Card variant="outlined">
         <CardOverflow>
-          <AspectRatio ratio="2">
+          <AspectRatio
+            ratio="2"
+            sx={{
+              cursor: "pointer",
+            }}
+          >
             <img
-              src="https://images.unsplash.com/photo-1532614338840-ab30cf10ed36?auto=format&fit=crop&w=318"
-              srcSet="https://images.unsplash.com/photo-1532614338840-ab30cf10ed36?auto=format&fit=crop&w=318&dpr=2 2x"
+              src={post.cover ? post.cover : default_post}
+              srcSet={post.cover ? post.cover : default_post}
               loading="lazy"
               alt=""
+              // открываем конкретный пост по id
+              onClick={() => navigate(`/post/${post._id}`)}
             />
           </AspectRatio>
         </CardOverflow>
-        <Typography level="h2" sx={{ fontSize: "md", mt: 2 }}>
+        <Typography level="h2" sx={{ fontSize: "md", mt: 2, mb: 2 }}>
           {post.title}
         </Typography>
-        <Typography level="body2" sx={{ mt: 0.5, mb: 2 }}>
-          {post.body.length < 30
-            ? post.body
-            : post.body.substring(0, 30) + "..."}
-        </Typography>
         <Box>
-          {userEmail && successLogin && (
+          {userName && successLogin && (
             <>
               <Button
                 startDecorator={<BookmarksIcon />}
                 color="success"
-                variant="plain"
+                size="sm"
+                variant="soft"
                 sx={{ mt: 0.5, mb: 2, mr: 1 }}
               >
                 В избранное
               </Button>
-              {userEmail === post.author && (
+              {userName === post.author && (
                 <Button
                   startDecorator={<DeleteIcon />}
                   color="danger"
                   variant="plain"
                   // sx={{ ml: 2 }}
-                  onClick={() => {}}
+                  onClick={() => handleDeletePost(post._id)}
                 >
                   Удалить
                 </Button>

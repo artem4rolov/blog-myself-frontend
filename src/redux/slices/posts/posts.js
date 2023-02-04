@@ -2,6 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import { getPosts } from "./postsActions";
 import { getPostById } from "./postsActions";
+import { createPost } from "./postsActions";
+import { deletePost } from "./postsActions";
 import { getCommentsOfPost } from "./postsActions";
 import { createCommentOfPost } from "./postsActions";
 import { deleteCommentOfPost } from "./postsActions";
@@ -11,6 +13,7 @@ const initialState = {
   currentPost: null,
   comments: [],
   refreshComments: false,
+  refreshPosts: false,
   error: null,
   loading: false,
 };
@@ -75,7 +78,7 @@ const postsSlice = createSlice({
       state.refreshComments = false;
       state.error = payload;
     },
-    // удалить комментарий из посту (зависит от авторизации)
+    // удалить комментарий из поста (зависит от авторизации)
     [deleteCommentOfPost.pending]: (state) => {
       state.loading = true;
       state.refreshComments = false;
@@ -88,6 +91,34 @@ const postsSlice = createSlice({
     [deleteCommentOfPost.rejected]: (state, { payload }) => {
       state.loading = false;
       state.refreshComments = false;
+    },
+    // удалить пост (зависит от авторизации)
+    [deletePost.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [deletePost.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.refreshPosts = true;
+      state.currentPost = null;
+      state.error = payload;
+    },
+    [deletePost.rejected]: (state, { payload }) => {
+      state.loading = false;
+    },
+    // создать пост (зависит от авторизации)
+    [createPost.pending]: (state) => {
+      state.loading = true;
+      state.refreshPosts = false;
+      state.error = null;
+    },
+    [createPost.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.refreshPosts = true;
+    },
+    [createPost.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.refreshPosts = false;
     },
   },
 });

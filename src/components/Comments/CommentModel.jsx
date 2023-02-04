@@ -13,11 +13,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { deleteCommentOfPost } from "../../redux/slices/posts/postsActions";
 
-const Comment = ({ comment }) => {
+const CommentModel = ({ comment }) => {
   const dispatch = useDispatch();
   const { id } = useParams();
 
-  const { loading, userEmail } = useSelector((state) => state.auth);
+  const { loading, userEmail, userName } = useSelector((state) => state.auth);
 
   const handleDeleteComment = (commentId) => {
     // console.log(postId, id);
@@ -35,13 +35,18 @@ const Comment = ({ comment }) => {
     >
       <ListItem alignItems="flex-start">
         <ListItemAvatar>
-          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+          <Avatar
+            alt="Remy Sharp"
+            src={
+              comment.userImg ? comment.userImg : "/static/images/avatar/1.jpg"
+            }
+          />
         </ListItemAvatar>
         <ListItemText
           sx={{ display: "inline", wordBreak: "break-word" }}
           primary={
             <Button size="md" variant="soft" color="info">
-              {comment.author.split("@")[0]}
+              {comment.author}
             </Button>
           }
           secondary={
@@ -62,7 +67,7 @@ const Comment = ({ comment }) => {
           >
             {getFormattedDate(comment.date)}
           </Typography>
-          {userEmail === comment.author && (
+          {userName === comment.author && (
             <Button
               startDecorator={<DeleteIcon />}
               color="danger"
@@ -79,4 +84,4 @@ const Comment = ({ comment }) => {
   );
 };
 
-export default Comment;
+export default CommentModel;

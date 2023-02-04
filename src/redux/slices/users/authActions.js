@@ -37,18 +37,49 @@ export const userLogin = createAsyncThunk(
 // регистрация
 export const registerUser = createAsyncThunk(
   "auth/register",
-  async ({ user_name, email, password }, { rejectWithValue }) => {
+  // отправляем formData с введенными данными пользователя и выбранным аватаром
+  async (formData, { rejectWithValue }) => {
     try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-      await axios.post(
+      const { data } = await axios.post(
         `${backendURL}/api/users/register`,
-        { user_name, email, password },
-        config
+        formData
       );
+      return data;
+    } catch (error) {
+      // return custom error message from backend if present
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+// обновление профиля пользователя
+export const editProfileUser = createAsyncThunk(
+  "auth/editProfileUser",
+  // отправляем formData с введенным именем пользователя и выбранным аватаром
+  async (formData, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("userToken");
+      if (token) {
+        const config = {
+          headers: {
+            token: `${token}`,
+          },
+        };
+        const { data } = await axios.patch(
+          `${backendURL}/api/users/editProfile`,
+          formData,
+          config
+        );
+        // заносим токен авторизации в localStorage
+        localStorage.setItem("userToken", data.token);
+        return data;
+      } else {
+        return new Error("Токен авторизации не получен");
+      }
     } catch (error) {
       // return custom error message from backend if present
       if (error.response && error.response.data.message) {

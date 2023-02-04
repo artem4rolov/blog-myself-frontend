@@ -10,7 +10,9 @@ import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import PostModel from "./PostModel";
 
 const Post = () => {
-  const { loading, posts, error } = useSelector((state) => state.posts);
+  const { loading, posts, error, refreshPosts } = useSelector(
+    (state) => state.posts
+  );
   const dispatch = useDispatch();
 
   const { userName, userEmail, successLogin } = useSelector(
@@ -20,9 +22,7 @@ const Post = () => {
   // как только компонент готов - получаем посты с бэка (не зависит от авторизации)
   React.useEffect(() => {
     dispatch(getPosts());
-  }, []);
-
-  console.log(posts);
+  }, [refreshPosts]);
 
   return (
     <Container maxWidth="lg">
@@ -54,13 +54,8 @@ const Post = () => {
       <Grid container spacing={3}>
         {posts
           ? posts.map((post) => (
-              <Grid item key={post.title} xs={12} sm={6} md={4}>
-                <PostModel
-                  key={post._id}
-                  post={post}
-                  userEmail={userEmail}
-                  successLogin={successLogin}
-                />
+              <Grid item key={post.title + Math.random()} xs={12} sm={6} md={4}>
+                <PostModel key={post._id} post={post} />
               </Grid>
             ))
           : "Не удалось получить посты"}

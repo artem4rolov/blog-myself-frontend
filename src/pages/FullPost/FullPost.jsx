@@ -12,12 +12,22 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { Container } from "@mui/material";
 import { Button } from "@mui/joy";
-
 // end UI
 import img from "../../assets/img/image.png";
 import getFormattedDate from "../../services/getFormattedDate";
-import GetComments from "../Comments/GetComments";
-import AddComment from "../Comments/AddComment";
+import GetComments from "../../components/Comments/GetComments";
+import AddComment from "../../components/Comments/AddComment";
+
+import DOMPurify from "dompurify";
+
+import default_post from "../../assets/img/default_post.svg";
+
+// создаем правильную разметку будущего поста
+function createMarkup(html) {
+  return {
+    __html: DOMPurify.sanitize(html),
+  };
+}
 
 const FullPost = () => {
   const dispatch = useDispatch();
@@ -40,25 +50,23 @@ const FullPost = () => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            marginBottom: 1,
           }}
         >
           {/* Дата поста */}
           <Box>
-            <Typography sx={{ color: "#9a9a9a", mb: 2 }}>
+            <Typography sx={{ color: "#9a9a9a" }}>
               {getFormattedDate(currentPost.date)}
             </Typography>
           </Box>
-
-          {/* <Button size="md" variant="soft" color="info">
-            {currentPost.author.split("@")[0]}
-          </Button> */}
-
+          {/* Просмотры */}
           <Box>
             <Typography sx={{ color: "#9a9a9a" }}>
               Просмотров: {currentPost.viewCount}
             </Typography>
           </Box>
         </Box>
+        {/* Обложка, на фоне - текст */}
         <Paper
           sx={{
             position: "relative",
@@ -69,10 +77,18 @@ const FullPost = () => {
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
-            backgroundImage: `url(${img})`,
+            backgroundImage: `url(${
+              currentPost.cover ? currentPost.cover : default_post
+            })`,
           }}
         >
-          {<img style={{ display: "none" }} src={img} alt="post image" />}
+          {
+            <img
+              style={{ display: "none" }}
+              src={currentPost.cover ? currentPost.cover : default_post}
+              alt="post image"
+            />
+          }
           <Box
             sx={{
               position: "absolute",
@@ -113,15 +129,28 @@ const FullPost = () => {
           </Grid>
         </Paper>
 
+        {/* Автор */}
+        <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
+          <Typography sx={{ marginRight: 1 }} variant="h5">
+            Автор:
+          </Typography>
+          <Button size="md" variant="soft" color="info">
+            {currentPost.author}
+          </Button>
+        </Box>
+
         {/* Текст поста */}
-        <Typography sx={{ marginBottom: "20px" }} variant="h5">
-          {/* <ReactMarkdown>{currentPost.body}</ReactMarkdown> */}
-          {currentPost.body}
-        </Typography>
+        <Box sx={{ marginBottom: 2 }}>
+          <div
+            className="preview"
+            dangerouslySetInnerHTML={createMarkup(currentPost.body)}
+          ></div>
+        </Box>
 
         {/* Оставить комментарий */}
         <AddComment />
 
+        {/* Комменты к посту */}
         <GetComments />
       </Container>
     )

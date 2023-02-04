@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import { CircularProgress, LinearProgress } from "@mui/material";
 import { ButtonRoot } from "@mui/joy/Button/Button";
 
@@ -49,7 +49,7 @@ const Login = () => {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 0,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -132,9 +132,9 @@ const Login = () => {
             ) : null}
             <Grid container>
               <Grid item>
-                <Link href="#" variant="body2" align="center">
+                <NavLink to="/register">
                   {"Нет аккаунта? Зарегистрируйтесь"}
-                </Link>
+                </NavLink>
               </Grid>
             </Grid>
           </Box>
