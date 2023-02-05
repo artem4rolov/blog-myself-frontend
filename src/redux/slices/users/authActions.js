@@ -3,7 +3,7 @@ import axios from "axios";
 
 // бэкенд по адресу
 // const backendURL = "http://localhost:5000";
-const backendURL = process.env.REACT_APP_API_URL;
+const backendURL = "https://nice-pink-lapel.cyclic.app/";
 
 // вход
 export const userLogin = createAsyncThunk(
