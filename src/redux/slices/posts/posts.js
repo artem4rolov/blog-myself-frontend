@@ -115,6 +115,7 @@ const postsSlice = createSlice({
     [createPost.fulfilled]: (state, { payload }) => {
       state.loading = false;
       state.refreshPosts = true;
+      state.currentPost = payload;
     },
     [createPost.rejected]: (state, { payload }) => {
       state.loading = false;

@@ -15,13 +15,15 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import Modal from "../../components/Modal/Modal";
+import { uploadImageOnRegister } from "../../redux/slices/users/authActions";
 
 const theme = createTheme();
 
 const Registration = () => {
   // стейт для модалки
   const [open, setOpen] = React.useState(false);
-  const [img, setImg] = React.useState(null);
+  const [imgUrl, setImgUrl] = React.useState(null);
+
   // достаем переменные из redux
   const { loading, userEmail, error, successRegister } = useSelector(
     (state) => state.auth
@@ -29,16 +31,27 @@ const Registration = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const createAvatar = (e) => {
+  const createAvatar = async (e) => {
     e.preventDefault();
-    setImg(e.target.files[0]);
+    // создаем специальный объект form Data для отправки на бэк
+    const formData = new FormData();
+    // достаем файл из ивента
+    const file = e.target.files[0];
+    // пихаем его в formData
+    formData.append("image", file);
+    // ждем загрузки на сервер и возвращаем новое имя файла (ссылку) для превью
+    const data = await dispatch(uploadImageOnRegister(formData));
+    // достаем ссылку на превью
+    const preview = data.payload.url;
+    // ставим новую ссылку в state для моментального отображения аватара пользователя
+    setImgUrl(preview);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     // отправляем на бэк объект со свойствами email и password и с соответствующими ключами
-    formData.append("avatar", img);
+    formData.append("avatar", imgUrl);
     dispatch(registerUser(formData));
   };
 
@@ -93,7 +106,15 @@ const Registration = () => {
             </Box>
           ) : (
             <>
-              <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <Avatar
+                sx={{
+                  m: 1,
+                  bgcolor: "secondary.main",
+                  width: "100px",
+                  height: "100px",
+                }}
+                src={`http://localhost:5000${imgUrl}`}
+              >
                 <LockOutlinedIcon />
               </Avatar>
               <Typography component="h1" variant="h5">

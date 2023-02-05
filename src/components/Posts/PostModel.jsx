@@ -50,8 +50,9 @@ const PostModel = ({ post }) => {
             }}
           >
             <img
-              src={post.cover ? post.cover : default_post}
-              srcSet={post.cover ? post.cover : default_post}
+              src={
+                post.cover ? `http://localhost:5000${post.cover}` : default_post
+              }
               loading="lazy"
               alt=""
               // открываем конкретный пост по id

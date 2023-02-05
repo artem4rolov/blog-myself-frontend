@@ -50,7 +50,7 @@ export const getPostById = createAsyncThunk("posts/getPostById", async (id) => {
 // создать пост
 export const createPost = createAsyncThunk(
   "posts/createPost",
-  async (formData) => {
+  async ({ title, body, cover }) => {
     try {
       const token = localStorage.getItem("userToken");
       if (token) {
@@ -61,7 +61,7 @@ export const createPost = createAsyncThunk(
         };
         const { data } = await axios.post(
           `${backendURL}/api/posts/create`,
-          formData,
+          { title, body, cover },
           config
         );
         return data;

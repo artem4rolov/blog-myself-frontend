@@ -63,25 +63,23 @@ const UserProfile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // отправляем на бэк объект со свойствами email и password и с соответствующими ключами
-    // formData.append("user_name", name);
+    // отправляем на бэк объект со свойствами email и avatar и с соответствующими ключами
     dispatch(editProfileUser({ user_name: name, avatar: imgUrl }));
   };
 
-  // console.log(img)
-
+  // обновляем поле пользователя при изменении
   React.useEffect(() => {
     if (successLogin && !loading && userName) {
       setName(userName);
     }
   }, [loading, userName]);
 
-  // React.useEffect(() => {
-  //   // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
-  //   if (!userEmail || !userName || !userToken) {
-  //     navigate("/");
-  //   }
-  // }, [userEmail, userName, userToken]);
+  React.useEffect(() => {
+    // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
+    if (!userEmail || !userName || !userToken) {
+      navigate("/");
+    }
+  }, [userEmail, userName, userToken]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -134,7 +132,7 @@ const UserProfile = () => {
                 type="file"
                 onChange={(e) => updateAvatar(e)}
               />
-              Добавить аватар
+              Изменить аватар
             </Button>
             <TextField
               margin="normal"

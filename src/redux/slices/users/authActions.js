@@ -5,6 +5,19 @@ import axios from "axios";
 const backendURL = "http://localhost:5000";
 // const backendURL = "https://nice-pink-lapel.cyclic.app";
 
+// загрузка изображений
+export const uploadImageOnRegister = createAsyncThunk(
+  "uploadImage",
+  async (formData) => {
+    try {
+      const { data } = await axios.post(`${backendURL}/upload`, formData);
+      return data;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
 // вход
 export const userLogin = createAsyncThunk(
   "auth/login",

@@ -14,7 +14,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost } from "../../redux/slices/posts/postsActions";
+import { createPost, uploadImage } from "../../redux/slices/posts/postsActions";
+import { useNavigate } from "react-router-dom";
 
 // создаем правильную разметку будущего поста
 function createMarkup(html) {
@@ -24,25 +25,40 @@ function createMarkup(html) {
 }
 
 const AddPost = () => {
+  // стейт для тектового редактора
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
   const [convertedContent, setConvertedContent] = useState(null);
-  const [img, setImg] = useState(null);
+  // стейт для обложки
+  const [imgUrl, setImgUrl] = React.useState(null);
+  // стейт для заголовка
   const [title, setTitle] = useState("");
 
-  const { loading, posts, error, refreshPosts } = useSelector(
+  const { loading, posts, error, refreshPosts, currentPost } = useSelector(
     (state) => state.posts
   );
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { userName, userEmail, successLogin } = useSelector(
     (state) => state.auth
   );
 
-  const createCover = (e) => {
+  const createCover = async (e) => {
     e.preventDefault();
-    setImg(e.target.files[0]);
+    // создаем специальный объект form Data для отправки на бэк
+    const formData = new FormData();
+    // достаем файл из ивента
+    const file = e.target.files[0];
+    // пихаем его в formData
+    formData.append("image", file);
+    // ждем загрузки на сервер и возвращаем новое имя файла (ссылку) для превью
+    const data = await dispatch(uploadImage(formData));
+    // достаем ссылку на превью
+    const preview = data.payload.url;
+    // ставим новую ссылку в state для моментального отображения аватара пользователя
+    setImgUrl(preview);
   };
 
   useEffect(() => {
@@ -50,18 +66,17 @@ const AddPost = () => {
     setConvertedContent(html);
   }, [editorState]);
 
+  useEffect(() => {
+    if (currentPost && !loading) {
+      navigate(`/post/${currentPost.id}`);
+    }
+  }, currentPost);
+
   const handleCreate = () => {
-    const formData = new FormData();
     // отправляем на бэк объект со свойствами email и password и с соответствующими ключами
-    formData.append("cover", img);
-    formData.append("title", title);
-    formData.append("body", convertedContent);
-    dispatch(createPost(formData));
+    dispatch(createPost({ title, body: convertedContent, cover: imgUrl }));
     // console.log(formData);
   };
-
-  console.log(convertedContent);
-  console.log(title);
 
   return (
     <Container maxWidth="lg">
@@ -75,11 +90,19 @@ const AddPost = () => {
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
-          backgroundImage: `url(${img})`,
+          backgroundImage: `url(${
+            imgUrl ? `http://localhost:5000${imgUrl}` : null
+          })`,
         }}
       >
         {/* Increase the priority of the hero background image */}
-        {<img style={{ display: "none" }} src={img} alt={title} />}
+        {
+          <img
+            style={{ display: "none" }}
+            src={imgUrl ? `http://localhost:5000${imgUrl}` : null}
+            alt={title}
+          />
+        }
         <Box
           sx={{
             position: "absolute",
@@ -93,7 +116,6 @@ const AddPost = () => {
         <Button
           variant="contained"
           component="label"
-          // fullWidth
           sx={{
             position: "absolute",
             top: "50%",

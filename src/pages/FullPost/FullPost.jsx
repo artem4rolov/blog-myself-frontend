@@ -78,7 +78,9 @@ const FullPost = () => {
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
             backgroundImage: `url(${
-              currentPost.cover ? currentPost.cover : default_post
+              currentPost.cover
+                ? `http://localhost:5000${currentPost.cover}`
+                : default_post
             })`,
           }}
         >
