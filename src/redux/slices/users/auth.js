@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { editProfileUser, userLogin } from "./authActions";
 // функция регистрации
 import { registerUser } from "./authActions";
+import { uploadImage } from "../posts/postsActions";
 
 // если есть токен в localStorage - забираем его
 const userToken = localStorage.getItem("userToken")
@@ -31,10 +32,9 @@ const authSlice = createSlice({
       state.userId = null;
       state.userName = null;
       state.userEmail = null;
-      // state.userToken = null;
+      state.userToken = null;
       state.successLogin = false;
       state.successRegister = false;
-      // state.error.login = null;
       state.error.register = null;
       state.userImg = null;
     },
@@ -46,6 +46,7 @@ const authSlice = createSlice({
       state.userEmail = payload.email;
       state.userId = payload.user_id;
       state.userImg = payload.avatar;
+      state.error.login = null;
     },
   },
   extraReducers: {

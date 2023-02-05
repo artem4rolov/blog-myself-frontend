@@ -30,11 +30,11 @@ const Header = () => {
   return (
     <>
       <Toolbar sx={{ borderBottom: 0, borderColor: "none" }}>
-        {userEmail && error.login == null ? (
+        {userEmail ? (
           <>
             <Avatar
               alt="Remy Sharp"
-              src={userImg ? userImg : default_avatar}
+              src={userImg ? `http://localhost:5000${userImg}` : default_avatar}
               sx={{
                 cursor: "pointer",
                 backgroundSize: "contain",
@@ -66,7 +66,7 @@ const Header = () => {
             </Button>
           </Link>
         </Typography>
-        {userEmail && error.login == null ? (
+        {userEmail ? (
           <>
             <Link to="post/add-post">
               <Button variant="contained" size="small">

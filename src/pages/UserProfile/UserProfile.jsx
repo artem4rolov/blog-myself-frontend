@@ -16,46 +16,65 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import Modal from "../../components/Modal/Modal";
 import { Divider } from "@mui/material";
+import { uploadImage } from "../../redux/slices/posts/postsActions";
 
 const theme = createTheme();
 
 const UserProfile = () => {
-  const { loading, userEmail, userName, userToken, userImg, error } =
-    useSelector((state) => state.auth);
-
+  // достаем переменные из redux
+  const {
+    loading,
+    userEmail,
+    userName,
+    userToken,
+    userImg,
+    error,
+    successLogin,
+  } = useSelector((state) => state.auth);
+  // достаем переменные из redux
   const { posts, comments } = useSelector((state) => state.posts);
+
   // стейт для модалки
   const [open, setOpen] = React.useState(false);
   // стейт для аватарки
-  const [img, setImg] = React.useState(null);
+  const [imgUrl, setImgUrl] = React.useState(null);
+  // стейт для контролируемого инпута с именем пользователя
+  const [name, setName] = React.useState(userName ? userName : "");
 
-  // const [name, setName] = React.useState(userName ? userName : "");
-  // достаем переменные из redux
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const updateAvatar = (e) => {
+  // выбор аватара пользователем
+  const updateAvatar = async (e) => {
     e.preventDefault();
-    setImg(e.target.files[0]);
+    // создаем специальный объект form Data для отправки на бэк
+    const formData = new FormData();
+    // достаем файл из ивента
+    const file = e.target.files[0];
+    // пихаем его в formData
+    formData.append("image", file);
+    // ждем загрузки на сервер и возвращаем новое имя файла (ссылку) для превью
+    const data = await dispatch(uploadImage(formData));
+    // достаем ссылку на превью
+    const preview = data.payload.url;
+    // ставим новую ссылку в state для моментального отображения аватара пользователя
+    setImgUrl(preview);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+  const handleSubmit = (e) => {
+    e.preventDefault();
     // отправляем на бэк объект со свойствами email и password и с соответствующими ключами
-    formData.append("avatar", img);
     // formData.append("user_name", name);
-    dispatch(editProfileUser(formData));
+    dispatch(editProfileUser({ user_name: name, avatar: imgUrl }));
   };
 
-  // console.log(img);
+  // console.log(img)
 
-  // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
-  // React.useEffect(() => {
-  //   if (successLogin && !loading && userName) {
-  //     setName(userName);
-  //   }
-  // }, [loading, userName]);
+  React.useEffect(() => {
+    if (successLogin && !loading && userName) {
+      setName(userName);
+    }
+  }, [loading, userName]);
 
   // React.useEffect(() => {
   //   // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
@@ -78,7 +97,11 @@ const UserProfile = () => {
         >
           <Avatar
             alt="Remy Sharp"
-            src={userImg ? userImg : <LockOutlinedIcon />}
+            src={
+              imgUrl
+                ? `http://localhost:5000${imgUrl}`
+                : `http://localhost:5000${userImg}`
+            }
             sx={{
               // m: 1,
               bgcolor: "secondary.main",
@@ -120,7 +143,8 @@ const UserProfile = () => {
               id="user_name"
               label="Ваше имя"
               name="user_name"
-              placeholder={userName}
+              value={name}
+              onInput={(e) => setName(e.target.value)}
             />
             <Button
               disabled={loading}

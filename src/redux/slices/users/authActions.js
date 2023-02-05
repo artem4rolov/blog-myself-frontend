@@ -2,8 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // бэкенд по адресу
-// const backendURL = "http://localhost:5000";
-const backendURL = "https://nice-pink-lapel.cyclic.app";
+const backendURL = "http://localhost:5000";
+// const backendURL = "https://nice-pink-lapel.cyclic.app";
 
 // вход
 export const userLogin = createAsyncThunk(
@@ -61,7 +61,7 @@ export const registerUser = createAsyncThunk(
 export const editProfileUser = createAsyncThunk(
   "auth/editProfileUser",
   // отправляем formData с введенным именем пользователя и выбранным аватаром
-  async (formData, { rejectWithValue }) => {
+  async ({ user_name, avatar }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("userToken");
       if (token) {
@@ -72,7 +72,7 @@ export const editProfileUser = createAsyncThunk(
         };
         const { data } = await axios.patch(
           `${backendURL}/api/users/editProfile`,
-          formData,
+          { user_name, avatar },
           config
         );
         // заносим токен авторизации в localStorage

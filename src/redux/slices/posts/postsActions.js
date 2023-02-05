@@ -2,8 +2,30 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // бэкенд по адресу
-// const backendURL = "http://localhost:5000";
-const backendURL = "https://nice-pink-lapel.cyclic.app";
+const backendURL = "http://localhost:5000";
+// const backendURL = "https://nice-pink-lapel.cyclic.app";
+
+// загрузка изображений
+export const uploadImage = createAsyncThunk("uploadImage", async (formData) => {
+  try {
+    const token = localStorage.getItem("userToken");
+    if (token) {
+      const config = {
+        headers: {
+          token: `${token}`,
+        },
+      };
+      const { data } = await axios.post(
+        `${backendURL}/upload`,
+        formData,
+        config
+      );
+      return data;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 // получить все посты
 export const getPosts = createAsyncThunk("posts/get", async () => {
