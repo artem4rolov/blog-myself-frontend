@@ -2,7 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // бэкенд по адресу
-const backendURL = "http://localhost:5000";
+// const backendURL = "http://localhost:5000";
+const backendURL = "https://nice-pink-lapel.cyclic.app/";
 
 // вход
 export const userLogin = createAsyncThunk(
