@@ -9,6 +9,8 @@ const store = configureStore({
   reducer: {
     // авторизация
     auth: authReducer,
+    // get-запрос к серверу каждые 15 минут для обновления доступа пользователя
+    // если токен jwt изменился - повторная авторизация
     [authService.reducerPath]: authService.reducer,
     // посты
     posts: postsReducer,

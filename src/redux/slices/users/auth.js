@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 // функция авторизации
-import { editProfileUser, userLogin } from "./authActions";
+import { editProfileUser, getUser, userLogin } from "./authActions";
 // функция регистрации
 import { registerUser } from "./authActions";
 import { uploadImage } from "../posts/postsActions";
@@ -20,6 +20,7 @@ const initialState = {
   error: { login: null, register: null }, // ошибки
   successLogin: false, // успешна ли авторизация
   successRegister: false, // успешна ли регистрация
+  currentUser: {},
 };
 
 const authSlice = createSlice({
@@ -35,7 +36,6 @@ const authSlice = createSlice({
       state.userToken = null;
       state.successLogin = false;
       state.successRegister = false;
-      state.error.register = null;
       state.userImg = null;
     },
     // обновляем каждые 15 минут (в Header.jsx) данные о пользователе, чтобы не сбрасывать аутентификацию
@@ -46,7 +46,6 @@ const authSlice = createSlice({
       state.userEmail = payload.email;
       state.userId = payload.user_id;
       state.userImg = payload.avatar;
-      state.error.login = null;
     },
   },
   extraReducers: {
@@ -104,6 +103,30 @@ const authSlice = createSlice({
     [editProfileUser.rejected]: (state, { payload }) => {
       state.loading = false;
       state.error = payload;
+    },
+    // загрузка изображений (зависит от авторизации)
+    [uploadImage.pending]: (state) => {
+      state.loading = true;
+      state.error.login = null;
+    },
+    [uploadImage.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+    },
+    [uploadImage.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.error.login = payload;
+    },
+    // найти юзера по никнейму (не зависит от авторизации)
+    [getUser.pending]: (state) => {
+      state.loading = true;
+    },
+    [getUser.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.currentUser = payload[0];
+    },
+    [getUser.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.error.login = payload;
     },
   },
 });

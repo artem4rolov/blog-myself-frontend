@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   getPostById,
   getCommentsOfPost,
@@ -10,7 +10,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import { Container } from "@mui/material";
+import { Container, Skeleton } from "@mui/material";
 import { Button } from "@mui/joy";
 // end UI
 import img from "../../assets/img/image.png";
@@ -21,6 +21,7 @@ import AddComment from "../../components/Comments/AddComment";
 import DOMPurify from "dompurify";
 
 import default_post from "../../assets/img/default_post.svg";
+import { getUser } from "../../redux/slices/users/authActions";
 
 // создаем правильную разметку будущего поста
 function createMarkup(html) {
@@ -31,10 +32,14 @@ function createMarkup(html) {
 
 const FullPost = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { id } = useParams();
 
   const { loading, currentPost, comments, error } = useSelector(
     (state) => state.posts
+  );
+  const { userEmail, userName, userImg, successLogin } = useSelector(
+    (state) => state.auth
   );
 
   React.useEffect(() => {
@@ -42,104 +47,132 @@ const FullPost = () => {
     dispatch(getCommentsOfPost(id));
   }, []);
 
+  const getUserProfile = async (user_name) => {
+    const user = await dispatch(getUser(user_name));
+    // console.log(user.payload[0]);
+    // если имя текущего пользователя в системе (если он авторизован) совпадает с именем автора поста, на который кликнул пользователь - открываем свой профиль
+    userName && user.payload[0].user_name === userName
+      ? navigate("/user-profile")
+      : navigate(`/user-profile/${user.payload[0].user_name}`);
+  };
+
   return (
     currentPost && (
       <Container maxWidth="lg">
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 1,
-          }}
-        >
-          {/* Дата поста */}
-          <Box>
-            <Typography sx={{ color: "#9a9a9a" }}>
-              {getFormattedDate(currentPost.date)}
-            </Typography>
-          </Box>
-          {/* Просмотры */}
-          <Box>
-            <Typography sx={{ color: "#9a9a9a" }}>
-              Просмотров: {currentPost.viewCount}
-            </Typography>
-          </Box>
-        </Box>
-        {/* Обложка, на фоне - текст */}
-        <Paper
-          sx={{
-            position: "relative",
-            backgroundColor: "grey.800",
-            color: "#fff",
-            minHeight: "400px",
-            mb: 2,
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-            backgroundImage: `url(${
-              currentPost.cover
-                ? `http://localhost:5000${currentPost.cover}`
-                : default_post
-            })`,
-          }}
-        >
-          {
-            <img
-              style={{ display: "none" }}
-              src={currentPost.cover ? currentPost.cover : default_post}
-              alt="post image"
-            />
-          }
+        {loading ? (
+          <Skeleton />
+        ) : (
           <Box
             sx={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              right: 0,
-              left: 0,
-              backgroundColor: "rgba(0,0,0,.3)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 1,
             }}
-          />
-          <Grid container>
-            <Grid item md={6}>
-              <Box
-                sx={{
-                  position: "relative",
-                  p: { xs: 3, md: 6 },
-                  pr: { md: 0 },
-                }}
-              >
-                <Typography
-                  component="h1"
-                  variant="h3"
-                  color="inherit"
-                  gutterBottom
+          >
+            {/* Дата поста */}
+            <Box>
+              <Typography sx={{ color: "#9a9a9a" }}>
+                {getFormattedDate(currentPost.date)}
+              </Typography>
+            </Box>
+            {/* Просмотры */}
+            <Box>
+              <Typography sx={{ color: "#9a9a9a" }}>
+                Просмотров: {currentPost.viewCount}
+              </Typography>
+            </Box>
+          </Box>
+        )}
+        {/* Обложка, на фоне - текст */}
+        {loading ? (
+          <Skeleton variant="rectangular" height={440} />
+        ) : (
+          <Paper
+            sx={{
+              position: "relative",
+              backgroundColor: "grey.800",
+              borderRadius: "20px",
+              color: "#fff",
+              minHeight: "400px",
+              mb: 2,
+              backgroundSize: "cover",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+              backgroundImage: `url(${
+                currentPost.cover
+                  ? `http://localhost:5000${currentPost.cover}`
+                  : default_post
+              })`,
+            }}
+          >
+            {
+              <img
+                style={{ display: "none" }}
+                src={currentPost.cover ? currentPost.cover : default_post}
+                alt="post image"
+              />
+            }
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                right: 0,
+                left: 0,
+                backgroundColor: "rgba(0,0,0,.3)",
+                borderRadius: "20px",
+              }}
+            />
+            <Grid container>
+              <Grid item md={6}>
+                <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textAlign: "center",
-                    marginTop: "25%",
+                    position: "relative",
+                    p: { xs: 3, md: 6 },
+                    pr: { md: 0 },
                   }}
-                  // заголовок на фоне картинки
                 >
-                  {currentPost.title}
-                </Typography>
-              </Box>
+                  <Typography
+                    component="h1"
+                    variant="h3"
+                    color="inherit"
+                    gutterBottom
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      textAlign: "center",
+                      marginTop: "25%",
+                    }}
+                    // заголовок на фоне картинки
+                  >
+                    {currentPost.title}
+                  </Typography>
+                </Box>
+              </Grid>
             </Grid>
-          </Grid>
-        </Paper>
+          </Paper>
+        )}
 
         {/* Автор */}
-        <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
-          <Typography sx={{ marginRight: 1 }} variant="h5">
-            Автор:
-          </Typography>
-          <Button size="md" variant="soft" color="info">
-            {currentPost.author}
-          </Button>
-        </Box>
+        {loading ? (
+          <Skeleton width="60%" />
+        ) : (
+          <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
+            <Typography sx={{ marginRight: 1 }} variant="h5">
+              Автор:
+            </Typography>
+            <Button
+              size="md"
+              variant="soft"
+              color="info"
+              onClick={() => getUserProfile(currentPost.author)}
+            >
+              {currentPost.author}
+            </Button>
+          </Box>
+        )}
 
         {/* Текст поста */}
         <Box sx={{ marginBottom: 2 }}>

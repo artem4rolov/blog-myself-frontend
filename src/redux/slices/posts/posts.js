@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { getPosts } from "./postsActions";
+import { getPosts, uploadImage } from "./postsActions";
 import { getPostById } from "./postsActions";
 import { createPost } from "./postsActions";
 import { deletePost } from "./postsActions";
@@ -16,6 +16,7 @@ const initialState = {
   refreshPosts: false,
   error: null,
   loading: false,
+  newPost: null,
 };
 
 const postsSlice = createSlice({
@@ -31,6 +32,9 @@ const postsSlice = createSlice({
     [getPosts.fulfilled]: (state, { payload }) => {
       state.loading = false;
       state.posts = payload;
+      state.currentPost = null;
+      state.newPost = null;
+      state.refreshPosts = false;
     },
     [getPosts.rejected]: (state, { payload }) => {
       state.loading = false;
@@ -44,6 +48,7 @@ const postsSlice = createSlice({
     [getPostById.fulfilled]: (state, { payload }) => {
       state.loading = false;
       state.currentPost = payload;
+      state.newPost = null;
     },
     [getPostById.rejected]: (state, { payload }) => {
       state.loading = false;
@@ -115,11 +120,24 @@ const postsSlice = createSlice({
     [createPost.fulfilled]: (state, { payload }) => {
       state.loading = false;
       state.refreshPosts = true;
-      state.currentPost = payload;
+      state.newPost = payload;
+      state.currentPost = null;
     },
     [createPost.rejected]: (state, { payload }) => {
       state.loading = false;
       state.refreshPosts = false;
+    },
+    // загрузка изображений (зависит от авторизации)
+    [uploadImage.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [uploadImage.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+    },
+    [uploadImage.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.error = payload;
     },
   },
 });

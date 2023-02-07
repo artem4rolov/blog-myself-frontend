@@ -5,8 +5,6 @@ const getFormattedDate = (date) => {
     year: "numeric",
     month: "long",
     day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
   };
   // фориатируем дату в человеческий вид
   return new Date(Date.parse(date)).toLocaleDateString("ru-RU", options, {

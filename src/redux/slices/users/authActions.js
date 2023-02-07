@@ -5,15 +5,22 @@ import axios from "axios";
 const backendURL = "http://localhost:5000";
 // const backendURL = "https://nice-pink-lapel.cyclic.app";
 
-// загрузка изображений
-export const uploadImageOnRegister = createAsyncThunk(
-  "uploadImage",
-  async (formData) => {
+// поиск автора по имени
+export const getUser = createAsyncThunk(
+  "auth/getUser",
+  async (user_name, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(`${backendURL}/upload`, formData);
+      const { data } = await axios.get(
+        `${backendURL}/api/users/profile/${user_name}`
+      );
       return data;
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      // возвращаем текст ошибки, если она есть
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
     }
   }
 );

@@ -38,7 +38,9 @@ const CommentModel = ({ comment }) => {
           <Avatar
             alt="Remy Sharp"
             src={
-              comment.userImg ? comment.userImg : "/static/images/avatar/1.jpg"
+              comment.userImg
+                ? `http://localhost:5000${comment.userImg}`
+                : "/static/images/avatar/1.jpg"
             }
           />
         </ListItemAvatar>

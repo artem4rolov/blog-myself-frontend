@@ -2,7 +2,7 @@ import * as React from "react";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Avatar } from "@mui/material";
+import { Avatar, Skeleton } from "@mui/material";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetUserDetailsQuery } from "../../services/authService";
@@ -17,7 +17,13 @@ const Header = () => {
   const navigate = useNavigate();
 
   // автоматически аутентифицируем пользователя, если найден jwt токен в заголовке запроса
-  const { data, isFetching } = useGetUserDetailsQuery("userDetails", {
+  const { data } = useGetUserDetailsQuery("userDetails", {
+    // делаем повторный запрос каждые 15 минут
+    pollingInterval: 90000,
+  });
+
+  // автоматически аутентифицируем пользователя, если найден jwt токен в заголовке запроса
+  const errors = useGetUserDetailsQuery("userDetails", {
     // делаем повторный запрос каждые 15 минут
     pollingInterval: 90000,
   });
@@ -25,6 +31,8 @@ const Header = () => {
   React.useEffect(() => {
     // если есть данные о пользователе из заголовоков запроса - заносим эти данные в store Redux, чтобы не сбрасывать аутентификацию пользователя
     if (data) dispatch(setCredentials(data));
+    console.log(data);
+    console.log(errors);
   }, [data, dispatch]);
 
   return (
@@ -32,17 +40,23 @@ const Header = () => {
       <Toolbar sx={{ borderBottom: 0, borderColor: "none" }}>
         {userEmail ? (
           <>
-            <Avatar
-              alt="Remy Sharp"
-              src={userImg ? `http://localhost:5000${userImg}` : default_avatar}
-              sx={{
-                cursor: "pointer",
-                backgroundSize: "contain",
-                backgroundPosition: "10",
-                marginRight: 1,
-              }}
-              onClick={() => navigate("/user-profile")}
-            />
+            {loading && !userImg ? (
+              <Skeleton variant="circular" width={40} height={40} />
+            ) : (
+              <Avatar
+                alt="Remy Sharp"
+                src={
+                  userImg ? `http://localhost:5000${userImg}` : default_avatar
+                }
+                sx={{
+                  cursor: "pointer",
+                  backgroundSize: "contain",
+                  backgroundPosition: "10",
+                  marginRight: 1,
+                }}
+                onClick={() => navigate("/user-profile")}
+              />
+            )}
           </>
         ) : null}
         <Typography

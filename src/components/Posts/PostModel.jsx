@@ -49,15 +49,21 @@ const PostModel = ({ post }) => {
               cursor: "pointer",
             }}
           >
-            <img
-              src={
-                post.cover ? `http://localhost:5000${post.cover}` : default_post
-              }
-              loading="lazy"
-              alt=""
-              // открываем конкретный пост по id
-              onClick={() => navigate(`/post/${post._id}`)}
-            />
+            {loading ? (
+              <Skeleton variant="rounded" width={210} height={60} />
+            ) : (
+              <img
+                src={
+                  post.cover
+                    ? `http://localhost:5000${post.cover}`
+                    : default_post
+                }
+                loading="lazy"
+                alt=""
+                // открываем конкретный пост по id
+                onClick={() => navigate(`/post/${post._id}`)}
+              />
+            )}
           </AspectRatio>
         </CardOverflow>
         <Typography level="h2" sx={{ fontSize: "md", mt: 2, mb: 2 }}>

@@ -13,14 +13,18 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { NavLink, useNavigate } from "react-router-dom";
+import default_avatar from "../../assets/img/default_avatar.svg";
 
 import Modal from "../../components/Modal/Modal";
 import { Divider, Skeleton } from "@mui/material";
 import { uploadImage } from "../../redux/slices/posts/postsActions";
+import { current } from "@reduxjs/toolkit";
 
 const theme = createTheme();
 
-const UserProfile = () => {
+const UserProfileById = () => {
+  const navigate = useNavigate();
+
   // достаем переменные из redux
   const {
     loading,
@@ -30,56 +34,17 @@ const UserProfile = () => {
     userImg,
     error,
     successLogin,
+    currentUser,
   } = useSelector((state) => state.auth);
   // достаем переменные из redux
   const { posts, comments } = useSelector((state) => state.posts);
 
-  // стейт для модалки
-  const [uploadAvatarProgress, setUploadAvatarProgress] = React.useState(false);
-  // стейт для аватарки
-  const [imgUrl, setImgUrl] = React.useState(null);
-  // стейт для контролируемого инпута с именем пользователя
-  const [name, setName] = React.useState(userName ? userName : "");
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  // выбор аватара пользователем
-  const updateAvatar = async (e) => {
-    e.preventDefault();
-    // создаем специальный объект form Data для отправки на бэк
-    const formData = new FormData();
-    // достаем файл из ивента
-    const file = e.target.files[0];
-    // пихаем его в formData
-    formData.append("image", file);
-    // ждем загрузки на сервер и возвращаем новое имя файла (ссылку) для превью
-    const data = await dispatch(uploadImage(formData));
-    // достаем ссылку на превью
-    const preview = data.payload.url;
-    // ставим новую ссылку в state для моментального отображения аватара пользователя
-    setImgUrl(preview);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // отправляем на бэк объект со свойствами email и avatar и с соответствующими ключами
-    dispatch(editProfileUser({ user_name: name, avatar: imgUrl }));
-  };
-
-  // обновляем поле пользователя при изменении
-  React.useEffect(() => {
-    if (successLogin && !loading && userName) {
-      setName(userName);
-    }
-  }, [loading, userName]);
-
   React.useEffect(() => {
     // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
-    if (!userToken) {
+    if (!currentUser) {
       navigate("/");
     }
-  }, [userEmail, userName, userToken]);
+  }, [currentUser]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -101,9 +66,9 @@ const UserProfile = () => {
               src={
                 // если есть аватар, который загрузил только что пользователь - отображаем его
                 // если пользователь ничего не выбрал - отображаем старый аватар
-                imgUrl
-                  ? `http://localhost:5000${imgUrl}`
-                  : `http://localhost:5000${userImg}`
+                currentUser
+                  ? `http://localhost:5000${currentUser.avatar}`
+                  : default_avatar
               }
               sx={{
                 // m: 1,
@@ -114,70 +79,21 @@ const UserProfile = () => {
             />
           )}
 
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{
-              mt: 1,
-              display: "flex",
-              flexDirection: "column",
-              maxWidth: "350px",
-            }}
-          >
-            <Button
-              variant="contained"
-              component="label"
-              fullWidth
-              disabled={loading}
-              sx={{ mt: 3, mb: 2 }}
-            >
-              <input
-                hidden
-                accept="image/*"
-                multiple
-                type="file"
-                onChange={(e) => updateAvatar(e)}
-              />
-              {loading ? "Сохранение..." : "Выбрать аватар"}
-            </Button>
-            <TextField
-              disabled={loading}
-              margin="normal"
-              required
-              fullWidth
-              id="user_name"
-              label="Ваше имя"
-              name="user_name"
-              value={name}
-              onInput={(e) => setName(e.target.value)}
-            />
-            <Button
-              disabled={loading}
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              {loading ? "Сохранение..." : "Сохранить"}
-            </Button>
-            {/* Нам приходят разные ошибки с бэка - если объект - выводим каждое значение ошибки под соответствующим инпутом, а если строка - выводим ее внизу под кнопкой */}
-          </Box>
           <Box>
-            <Divider sx={{ marginBottom: "25px" }} />
             <Box
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 maxWidth: "350px",
                 marginBottom: "25px",
+                marginTop: "25px",
               }}
             >
               <Typography variant="h5" sx={{ marginRight: 2 }}>
                 E-mail:
               </Typography>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                {userEmail}
+                {currentUser.email}
               </Typography>
             </Box>
             <Divider sx={{ marginBottom: "25px" }} />
@@ -194,7 +110,9 @@ const UserProfile = () => {
               </Typography>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                 {posts
-                  ? posts.filter((post) => post.author === userName).length
+                  ? posts.filter(
+                      (post) => post.author === currentUser.user_name
+                    ).length
                   : 0}
               </Typography>
             </Box>
@@ -212,8 +130,9 @@ const UserProfile = () => {
               </Typography>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                 {comments
-                  ? comments.filter((comment) => comment.author === userName)
-                      .length
+                  ? comments.filter(
+                      (comment) => comment.author === currentUser.user_name
+                    ).length
                   : 0}
               </Typography>
             </Box>
@@ -224,4 +143,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default UserProfileById;

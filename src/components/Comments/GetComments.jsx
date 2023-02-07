@@ -1,3 +1,4 @@
+import { Box, Container, Skeleton } from "@mui/material";
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -20,11 +21,18 @@ const GetComments = () => {
   return (
     <>
       {/* Комменты пользователей */}
-      {comments
-        ? comments.map((comment) => (
-            <CommentModel key={comment._id} comment={comment} />
+      {loading
+        ? Array.from(new Array(3)).map((item, index) => (
+            <Box key={index + Math.random()} sx={{ marginBottom: 3 }}>
+              <Skeleton variant="rectangular" height={50} />
+              <Skeleton width="60%" />
+            </Box>
           ))
-        : null}
+        : comments &&
+          comments.map((comment) => (
+            <CommentModel key={comment._id} comment={comment} />
+          ))}
+      {!comments && "Комментариев пока нет..."}
     </>
   );
 };

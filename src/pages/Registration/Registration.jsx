@@ -15,7 +15,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import Modal from "../../components/Modal/Modal";
-import { uploadImageOnRegister } from "../../redux/slices/users/authActions";
 
 const theme = createTheme();
 
@@ -40,11 +39,11 @@ const Registration = () => {
     // пихаем его в formData
     formData.append("image", file);
     // ждем загрузки на сервер и возвращаем новое имя файла (ссылку) для превью
-    const data = await dispatch(uploadImageOnRegister(formData));
+    // const data = await dispatch(uploadImageOnRegister(formData));
     // достаем ссылку на превью
-    const preview = data.payload.url;
+    // const preview = data.payload.url;
     // ставим новую ссылку в state для моментального отображения аватара пользователя
-    setImgUrl(preview);
+    // setImgUrl(preview);
   };
 
   const handleSubmit = (event) => {

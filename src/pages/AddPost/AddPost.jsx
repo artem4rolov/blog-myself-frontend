@@ -10,6 +10,7 @@ import {
   Container,
   Input,
   Paper,
+  Skeleton,
   TextField,
   Typography,
 } from "@mui/material";
@@ -35,9 +36,7 @@ const AddPost = () => {
   // стейт для заголовка
   const [title, setTitle] = useState("");
 
-  const { loading, posts, error, refreshPosts, currentPost } = useSelector(
-    (state) => state.posts
-  );
+  const { loading, error, newPost } = useSelector((state) => state.posts);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -67,10 +66,10 @@ const AddPost = () => {
   }, [editorState]);
 
   useEffect(() => {
-    if (currentPost && !loading) {
-      navigate(`/post/${currentPost.id}`);
+    if (newPost && !loading) {
+      navigate(`/post/${newPost._id}`);
     }
-  }, currentPost);
+  }, [newPost, loading]);
 
   const handleCreate = () => {
     // отправляем на бэк объект со свойствами email и password и с соответствующими ключами
@@ -80,59 +79,66 @@ const AddPost = () => {
 
   return (
     <Container maxWidth="lg">
-      <Paper
-        sx={{
-          position: "relative",
-          backgroundColor: "grey.800",
-          color: "#fff",
-          minHeight: "400px",
-          mb: 6,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          backgroundImage: `url(${
-            imgUrl ? `http://localhost:5000${imgUrl}` : null
-          })`,
-        }}
-      >
-        {/* Increase the priority of the hero background image */}
-        {
-          <img
-            style={{ display: "none" }}
-            src={imgUrl ? `http://localhost:5000${imgUrl}` : null}
-            alt={title}
-          />
-        }
-        <Box
+      {loading ? (
+        <Skeleton variant="rectangle" height={380} />
+      ) : (
+        <Paper
           sx={{
-            position: "absolute",
-            top: 0,
-            bottom: 0,
-            right: 0,
-            left: 0,
-            backgroundColor: "rgba(0,0,0,.3)",
-          }}
-        />
-        <Button
-          variant="contained"
-          component="label"
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
+            borderRadius: "20px",
+            position: "relative",
+            backgroundColor: "grey.800",
+            color: "#fff",
+            minHeight: "400px",
+            mb: 6,
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            backgroundImage: `url(${
+              imgUrl ? `http://localhost:5000${imgUrl}` : null
+            })`,
           }}
         >
-          <input
-            hidden
-            accept="image/*"
-            multiple
-            type="file"
-            onChange={(e) => createCover(e)}
+          {/* Increase the priority of the hero background image */}
+          {
+            <img
+              style={{ display: "none" }}
+              src={imgUrl ? `http://localhost:5000${imgUrl}` : null}
+              alt={title}
+            />
+          }
+          <Box
+            sx={{
+              borderRadius: "20px",
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              right: 0,
+              left: 0,
+              backgroundColor: "rgba(0,0,0,.3)",
+            }}
           />
-          Загрузить обложку
-        </Button>
-      </Paper>
+          <Button
+            variant="contained"
+            component="label"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              textAlign: "center",
+            }}
+          >
+            <input
+              hidden
+              accept="image/*"
+              multiple
+              type="file"
+              onChange={(e) => createCover(e)}
+            />
+            {loading ? "Загрузка..." : "Загрузить обложку"}
+          </Button>
+        </Paper>
+      )}
       <Input
         placeholder="Заголовок вашего поста"
         fullWidth
@@ -159,11 +165,12 @@ const AddPost = () => {
         ></div> */}
       </div>
       <Button
+        disabled={loading}
         variant="contained"
         sx={{ marginBottom: "20px", marginTop: "20px" }}
         onClick={() => handleCreate()}
       >
-        Добавить пост
+        {loading ? "Секунду..." : "Добавить пост"}
       </Button>
     </Container>
   );

@@ -4,7 +4,7 @@ import { getPosts } from "../../redux/slices/posts/postsActions";
 
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Container, Grid, Toolbar } from "@mui/material";
+import { Container, Grid, Skeleton, Toolbar } from "@mui/material";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import PostModel from "./PostModel";
@@ -25,7 +25,7 @@ const Post = () => {
   }, [refreshPosts]);
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ marginBottom: 4 }}>
       {/* если пользователь вошел - показываем кнопки по сортировке */}
       {userEmail && successLogin ? (
         <Toolbar
@@ -52,13 +52,20 @@ const Post = () => {
         </Toolbar>
       ) : null}
       <Grid container spacing={3}>
-        {posts
-          ? posts.map((post) => (
+        {loading
+          ? Array.from(new Array(6)).map((item, index) => (
+              <Grid item key={index + Math.random()} xs={12} sm={6} md={4}>
+                <Skeleton variant="rectangular" height={200} />
+                <Skeleton />
+                <Skeleton width="60%" />
+              </Grid>
+            ))
+          : posts &&
+            posts.map((post) => (
               <Grid item key={post.title + Math.random()} xs={12} sm={6} md={4}>
                 <PostModel key={post._id} post={post} />
               </Grid>
-            ))
-          : "Не удалось получить посты"}
+            ))}
       </Grid>
     </Container>
   );
