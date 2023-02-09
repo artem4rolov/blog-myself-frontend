@@ -41,7 +41,7 @@ const UserProfileById = () => {
 
   React.useEffect(() => {
     // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
-    if (!currentUser) {
+    if (!currentUser.user_name) {
       navigate("/");
     }
   }, [currentUser]);
@@ -80,6 +80,23 @@ const UserProfileById = () => {
           )}
 
           <Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                maxWidth: "350px",
+                marginBottom: "25px",
+                marginTop: "25px",
+              }}
+            >
+              <Typography variant="h5" sx={{ marginRight: 2 }}>
+                Имя:
+              </Typography>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                {currentUser.user_name}
+              </Typography>
+            </Box>
+            <Divider sx={{ marginBottom: "25px" }} />
             <Box
               sx={{
                 display: "flex",

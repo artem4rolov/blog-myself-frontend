@@ -22,17 +22,10 @@ const Header = () => {
     pollingInterval: 90000,
   });
 
-  // автоматически аутентифицируем пользователя, если найден jwt токен в заголовке запроса
-  const errors = useGetUserDetailsQuery("userDetails", {
-    // делаем повторный запрос каждые 15 минут
-    pollingInterval: 90000,
-  });
-
   React.useEffect(() => {
     // если есть данные о пользователе из заголовоков запроса - заносим эти данные в store Redux, чтобы не сбрасывать аутентификацию пользователя
     if (data) dispatch(setCredentials(data));
     console.log(data);
-    console.log(errors);
   }, [data, dispatch]);
 
   return (

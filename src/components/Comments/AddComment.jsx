@@ -49,7 +49,11 @@ const AddComment = () => {
 
   return (
     <CssVarsProvider>
-      <FormControl onSubmit={handleSubmit} component="form">
+      <FormControl
+        onSubmit={handleSubmit}
+        component="form"
+        sx={{ marginBottom: 4 }}
+      >
         <Textarea
           placeholder="Создайте комментарий"
           value={commentText}

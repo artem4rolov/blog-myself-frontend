@@ -19,6 +19,11 @@ import { deletePost } from "../../redux/slices/posts/postsActions";
 import { useDispatch, useSelector } from "react-redux";
 
 import default_post from "../../assets/img/default_post.svg";
+import {
+  addFavorite,
+  removeFavorite,
+} from "../../redux/slices/users/authActions";
+import { Skeleton } from "@mui/material";
 
 // создаем правильную разметку будущего поста
 function createMarkup(html) {
@@ -31,12 +36,82 @@ const PostModel = ({ post }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { loading, userEmail, userName, successLogin } = useSelector(
-    (state) => state.auth
-  );
+  const {
+    loading,
+    userEmail,
+    userName,
+    successLogin,
+    favoritePosts,
+    userToken,
+  } = useSelector((state) => state.auth);
 
+  const { posts, error, refreshPosts } = useSelector((state) => state.posts);
+
+  // удаляем пост
   const handleDeletePost = (id) => {
+    // удаляем пост из БД
     dispatch(deletePost({ postId: id }));
+    // удаляем пост из коллекции пользователя (если он там есть)
+    dispatch(removeFavorite({ id }));
+  };
+
+  // добавляем или удаляем пост из избранной коллекции пользователя
+  const handleFavoritePost = async (id) => {
+    if (favoritePosts && favoritePosts.length > 0) {
+      // ищем такой же id в массиве избранных постов пользователя
+      const index = favoritePosts.indexOf(id);
+      // если такой id уже есть - удаляем его из БД
+      if (index !== -1) {
+        await dispatch(removeFavorite({ id }));
+        return;
+      } else {
+        // если такого id нет - добавляем его
+        await dispatch(addFavorite({ id }));
+        return;
+      }
+    }
+    dispatch(addFavorite({ id }));
+  };
+
+  // меняем надпись кнопки избранного
+  const handleChangeLabel = (id) => {
+    // если jwt-токен устарел - выводим сообщение пользователю
+    if (userToken && !userEmail && !userName) {
+      setOpen(true);
+      setVariant("error");
+      setText("Сессия истекла, авторизуйтесь");
+      setTimeout(() => {
+        setOpen(false);
+      }, 3000);
+    }
+
+    // если с токеном все ок - продолжаем функционал избранного
+    if (favoritePosts && favoritePosts.length > 0) {
+      // если текущий id поста совпадает с id поста в избранном
+      const index = favoritePosts.indexOf(id);
+      if (index !== -1) {
+        // даем надпись удаления из избранного
+        return <>Удалить из избранного</>;
+        // если же совпадений нет - даем надпись добавить в избранное
+      } else return <>Добавить в избранное</>;
+    }
+    // если массив с избранным пуст - даем надпись добавить в избранное
+    return <>Добавить в избранное</>;
+  };
+
+  // блокируем кнопку при добавлении в избранное
+  const handleSetDisableButton = (id) => {
+    if (favoritePosts && favoritePosts.length > 0) {
+      // если текущий id поста совпадает с id поста в избранном
+      const index = favoritePosts.indexOf(id);
+      if (index !== -1 && loading) {
+        // блокируем кнопку
+        return true;
+        // если же совпадений нет - разблокируем кнопку
+      } else return false;
+    }
+    // по дефолту кнопка не заблокирована
+    return false;
   };
 
   return (
@@ -49,21 +124,15 @@ const PostModel = ({ post }) => {
               cursor: "pointer",
             }}
           >
-            {loading ? (
-              <Skeleton variant="rounded" width={210} height={60} />
-            ) : (
-              <img
-                src={
-                  post.cover
-                    ? `http://localhost:5000${post.cover}`
-                    : default_post
-                }
-                loading="lazy"
-                alt=""
-                // открываем конкретный пост по id
-                onClick={() => navigate(`/post/${post._id}`)}
-              />
-            )}
+            <img
+              src={
+                post.cover ? `http://localhost:5000${post.cover}` : default_post
+              }
+              loading="lazy"
+              alt=""
+              // открываем конкретный пост по id
+              onClick={() => navigate(`/post/${post._id}`)}
+            />
           </AspectRatio>
         </CardOverflow>
         <Typography level="h2" sx={{ fontSize: "md", mt: 2, mb: 2 }}>
@@ -77,9 +146,12 @@ const PostModel = ({ post }) => {
                 color="success"
                 size="sm"
                 variant="soft"
-                sx={{ mt: 0.5, mb: 2, mr: 1 }}
+                sx={{ mt: 0.5, mb: 2, mr: 0.5 }}
+                onClick={() => handleFavoritePost(post._id)}
+                disabled={handleSetDisableButton(post._id)}
               >
-                В избранное
+                {/* меняем надпись кнопки в зависимости от избранных постов */}
+                {handleChangeLabel(post._id)}
               </Button>
               {userName === post.author && (
                 <Button

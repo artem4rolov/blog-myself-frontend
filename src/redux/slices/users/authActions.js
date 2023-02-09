@@ -5,6 +5,70 @@ import axios from "axios";
 const backendURL = "http://localhost:5000";
 // const backendURL = "https://nice-pink-lapel.cyclic.app";
 
+// добавляем пост в избранное
+export const addFavorite = createAsyncThunk(
+  "auth/addFavorite",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("userToken");
+      if (token) {
+        const config = {
+          headers: {
+            token: `${token}`,
+          },
+        };
+        const { data } = await axios.post(
+          `${backendURL}/api/users/addFavorite/${id}`,
+          { id },
+          config
+        );
+        return data;
+      } else {
+        return new Error("Токен авторизации не получен");
+      }
+    } catch (error) {
+      // возвращаем текст ошибки, если она есть
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+// удаляем пост из избранного
+export const removeFavorite = createAsyncThunk(
+  "auth/addFavorite",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("userToken");
+      if (token) {
+        const config = {
+          headers: {
+            token: `${token}`,
+          },
+        };
+        const { data } = await axios.post(
+          `${backendURL}/api/users/removeFavorite/${id}`,
+          { id },
+          config
+        );
+        return data;
+      } else {
+        return new Error("Токен авторизации не получен");
+      }
+    } catch (error) {
+      // возвращаем текст ошибки, если она есть
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
 // поиск автора по имени
 export const getUser = createAsyncThunk(
   "auth/getUser",

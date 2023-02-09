@@ -1,6 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 // функция авторизации
-import { editProfileUser, getUser, userLogin } from "./authActions";
+import {
+  addFavorite,
+  editProfileUser,
+  getUser,
+  removeFavorite,
+  userLogin,
+} from "./authActions";
 // функция регистрации
 import { registerUser } from "./authActions";
 import { uploadImage } from "../posts/postsActions";
@@ -21,6 +27,8 @@ const initialState = {
   successLogin: false, // успешна ли авторизация
   successRegister: false, // успешна ли регистрация
   currentUser: {},
+  refreshUser: false,
+  favoritePosts: [],
 };
 
 const authSlice = createSlice({
@@ -46,6 +54,7 @@ const authSlice = createSlice({
       state.userEmail = payload.email;
       state.userId = payload.user_id;
       state.userImg = payload.avatar;
+      state.favoritePosts = payload.favorites;
     },
   },
   extraReducers: {
@@ -65,6 +74,7 @@ const authSlice = createSlice({
       state.userToken = localStorage.getItem("userToken")
         ? localStorage.getItem("userToken")
         : null;
+      state.favoritePosts = payload.favorites;
     },
     [userLogin.rejected]: (state, { payload }) => {
       state.loading = false;
@@ -90,6 +100,7 @@ const authSlice = createSlice({
       state.loading = true;
       state.error.login = null;
       state.error.register = null;
+      state.refreshUser = false;
     },
     [editProfileUser.fulfilled]: (state, { payload }) => {
       state.loading = false;
@@ -99,10 +110,12 @@ const authSlice = createSlice({
       state.userToken = localStorage.getItem("userToken")
         ? localStorage.getItem("userToken")
         : null;
+      state.refreshUser = true;
     },
     [editProfileUser.rejected]: (state, { payload }) => {
       state.loading = false;
-      state.error = payload;
+      state.error.login = payload;
+      state.refreshUser = false;
     },
     // загрузка изображений (зависит от авторизации)
     [uploadImage.pending]: (state) => {
@@ -127,6 +140,32 @@ const authSlice = createSlice({
     [getUser.rejected]: (state, { payload }) => {
       state.loading = false;
       state.error.login = payload;
+    },
+    // добавить пост в избранное (зависит от авторизации)
+    [addFavorite.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [addFavorite.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.favoritePosts = payload;
+    },
+    [addFavorite.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.error = payload;
+    },
+    // удалить пост из избранного (зависит от авторизации)
+    [removeFavorite.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [removeFavorite.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.favoritePosts = payload;
+    },
+    [removeFavorite.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.error = payload;
     },
   },
 });

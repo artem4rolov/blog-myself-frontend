@@ -4,13 +4,20 @@ import { getPosts } from "../../redux/slices/posts/postsActions";
 
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Container, Grid, Skeleton, Toolbar } from "@mui/material";
+import {
+  Alert,
+  Container,
+  Grid,
+  Skeleton,
+  Snackbar,
+  Toolbar,
+} from "@mui/material";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import PostModel from "./PostModel";
 
 const Post = () => {
-  const { loading, posts, error, refreshPosts } = useSelector(
+  const { loading, posts, error, refreshPosts, handleDeletePost } = useSelector(
     (state) => state.posts
   );
   const dispatch = useDispatch();
@@ -19,13 +26,41 @@ const Post = () => {
     (state) => state.auth
   );
 
+  // для вывода пуш-сообщений
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
   // как только компонент готов - получаем посты с бэка (не зависит от авторизации)
   React.useEffect(() => {
     dispatch(getPosts());
   }, [refreshPosts]);
 
+  React.useEffect(() => {
+    if (handleDeletePost) {
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 3000);
+    }
+  }, [handleDeletePost]);
+
   return (
     <Container maxWidth="lg" sx={{ marginBottom: 4 }}>
+      {/* пуш уведомление об удалении поста */}
+      <Snackbar
+        open={open}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleClose} severity="success" variant="filled">
+          Пост удалён
+        </Alert>
+      </Snackbar>
       {/* если пользователь вошел - показываем кнопки по сортировке */}
       {userEmail && successLogin ? (
         <Toolbar

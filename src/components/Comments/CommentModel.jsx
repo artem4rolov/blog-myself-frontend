@@ -10,18 +10,30 @@ import getFormattedDate from "../../services/getFormattedDate";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Button } from "@mui/joy";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { deleteCommentOfPost } from "../../redux/slices/posts/postsActions";
+import { getUser } from "../../redux/slices/users/authActions";
 
 const CommentModel = ({ comment }) => {
   const dispatch = useDispatch();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const { loading, userEmail, userName } = useSelector((state) => state.auth);
 
   const handleDeleteComment = (commentId) => {
     // console.log(postId, id);
     dispatch(deleteCommentOfPost({ postId: id, id: commentId }));
+  };
+
+  // переход на страницу профиля пользователя (создателя поста)
+  const getUserProfile = async (user_name) => {
+    // ждем получения данных с бэка
+    const user = await dispatch(getUser(user_name));
+    // если имя текущего пользователя в системе (если он авторизован) совпадает с именем автора поста, на который кликнул пользователь - открываем свой профиль
+    userName && user.payload[0].user_name === userName
+      ? navigate("/user-profile")
+      : navigate(`/user-profile/${user.payload[0].user_name}`);
   };
 
   return (
@@ -47,7 +59,12 @@ const CommentModel = ({ comment }) => {
         <ListItemText
           sx={{ display: "inline", wordBreak: "break-word" }}
           primary={
-            <Button size="md" variant="soft" color="info">
+            <Button
+              size="md"
+              variant="soft"
+              color="info"
+              onClick={() => getUserProfile(comment.author)}
+            >
               {comment.author}
             </Button>
           }
