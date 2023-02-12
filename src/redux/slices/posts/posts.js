@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { getPosts, uploadImage } from "./postsActions";
+import { getCommentsOfUser, getPosts, uploadImage } from "./postsActions";
 import { getPostById } from "./postsActions";
 import { createPost } from "./postsActions";
 import { deletePost } from "./postsActions";
@@ -12,6 +12,7 @@ const initialState = {
   posts: [],
   currentPost: null,
   comments: [],
+  usersComments: [],
   refreshComments: false,
   refreshPosts: false,
   error: null,
@@ -85,6 +86,25 @@ const postsSlice = createSlice({
       state.newComment = false;
     },
     [getCommentsOfPost.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.error = payload;
+      state.handleDeleteComment = false;
+      state.newComment = false;
+    },
+    // Получить все комменты пользователя (зависит от авторизации)
+    [getCommentsOfUser.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+      state.handleDeleteComment = false;
+      state.newComment = false;
+    },
+    [getCommentsOfUser.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.usersComments = payload;
+      state.handleDeleteComment = false;
+      state.newComment = false;
+    },
+    [getCommentsOfUser.rejected]: (state, { payload }) => {
       state.loading = false;
       state.error = payload;
       state.handleDeleteComment = false;

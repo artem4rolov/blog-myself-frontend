@@ -89,6 +89,31 @@ export const getCommentsOfPost = createAsyncThunk(
   }
 );
 
+// получить все комменты конкретного пользователя
+export const getCommentsOfUser = createAsyncThunk(
+  "posts/comments/user",
+  async () => {
+    try {
+      const token = localStorage.getItem("userToken");
+      if (token) {
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+            token: `${token}`,
+          },
+        };
+        const { data } = await axios.get(
+          `${backendURL}/api/posts/comments/user`,
+          config
+        );
+        return data;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
 // создать коммент к конкретному посту
 export const createCommentOfPost = createAsyncThunk(
   "posts/createCommentOfPost",

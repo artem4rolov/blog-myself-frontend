@@ -36,6 +36,7 @@ const PostModel = ({ post }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // достаем переменные из redux
   const {
     loading,
     userEmail,

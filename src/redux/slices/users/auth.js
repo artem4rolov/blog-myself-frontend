@@ -144,7 +144,7 @@ const authSlice = createSlice({
     // добавить пост в избранное (зависит от авторизации)
     [addFavorite.pending]: (state) => {
       state.loading = true;
-      state.error = null;
+      state.error.login = null;
     },
     [addFavorite.fulfilled]: (state, { payload }) => {
       state.loading = false;
@@ -152,12 +152,12 @@ const authSlice = createSlice({
     },
     [addFavorite.rejected]: (state, { payload }) => {
       state.loading = false;
-      state.error = payload;
+      state.error.login = payload;
     },
     // удалить пост из избранного (зависит от авторизации)
     [removeFavorite.pending]: (state) => {
       state.loading = true;
-      state.error = null;
+      state.error.login = null;
     },
     [removeFavorite.fulfilled]: (state, { payload }) => {
       state.loading = false;
@@ -165,7 +165,7 @@ const authSlice = createSlice({
     },
     [removeFavorite.rejected]: (state, { payload }) => {
       state.loading = false;
-      state.error = payload;
+      state.error.login = payload;
     },
   },
 });

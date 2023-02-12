@@ -16,7 +16,12 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import Modal from "../../components/Modal/Modal";
 import { Divider, Skeleton } from "@mui/material";
-import { uploadImage } from "../../redux/slices/posts/postsActions";
+import {
+  getCommentsOfPost,
+  getCommentsOfUser,
+  getPosts,
+  uploadImage,
+} from "../../redux/slices/posts/postsActions";
 
 const theme = createTheme();
 
@@ -32,10 +37,10 @@ const UserProfile = () => {
     successLogin,
   } = useSelector((state) => state.auth);
   // достаем переменные из redux
-  const { posts, comments } = useSelector((state) => state.posts);
+  const { posts, usersComments } = useSelector((state) => state.posts);
 
-  // стейт для модалки
-  const [uploadAvatarProgress, setUploadAvatarProgress] = React.useState(false);
+  // стейт комментариев, поскольку роута на бэкенде для получения всех комментов нет - сделаем через стейт
+  const [comments, setComments] = React.useState(null);
   // стейт для аватарки
   const [imgUrl, setImgUrl] = React.useState(null);
   // стейт для контролируемого инпута с именем пользователя
@@ -71,6 +76,8 @@ const UserProfile = () => {
   React.useEffect(() => {
     if (successLogin && !loading && userName) {
       setName(userName);
+      dispatch(getPosts());
+      dispatch(getCommentsOfUser());
     }
   }, [loading, userName]);
 
@@ -211,9 +218,10 @@ const UserProfile = () => {
                 Комментариев:
               </Typography>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                {comments
-                  ? comments.filter((comment) => comment.author === userName)
-                      .length
+                {usersComments
+                  ? usersComments.filter(
+                      (comment) => comment.author === userName
+                    ).length
                   : 0}
               </Typography>
             </Box>
