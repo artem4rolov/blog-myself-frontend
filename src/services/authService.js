@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const backendURL = "http://localhost:5000";
+const backendURL = "https://nice-pink-lapel.cyclic.app/";
 // const backendURL = "https://nice-pink-lapel.cyclic.app";
 
 // добавляем jwt токен к каждому запросу пользователя на сайте

@@ -67,7 +67,7 @@ const UserProfileById = () => {
                 // если есть аватар, который загрузил только что пользователь - отображаем его
                 // если пользователь ничего не выбрал - отображаем старый аватар
                 currentUser
-                  ? `http://localhost:5000${currentUser.avatar}`
+                  ? `https://nice-pink-lapel.cyclic.app/${currentUser.avatar}`
                   : default_avatar
               }
               sx={{

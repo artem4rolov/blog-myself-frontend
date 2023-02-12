@@ -109,8 +109,8 @@ const UserProfile = () => {
                 // если есть аватар, который загрузил только что пользователь - отображаем его
                 // если пользователь ничего не выбрал - отображаем старый аватар
                 imgUrl
-                  ? `http://localhost:5000${imgUrl}`
-                  : `http://localhost:5000${userImg}`
+                  ? `https://nice-pink-lapel.cyclic.app/${imgUrl}`
+                  : `https://nice-pink-lapel.cyclic.app/${userImg}`
               }
               sx={{
                 // m: 1,

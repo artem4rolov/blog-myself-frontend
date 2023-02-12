@@ -244,7 +244,7 @@ const FullPost = () => {
               backgroundPosition: "center",
               backgroundImage: `url(${
                 currentPost.cover
-                  ? `http://localhost:5000${currentPost.cover}`
+                  ? `https://nice-pink-lapel.cyclic.app/${currentPost.cover}`
                   : default_post
               })`,
             }}

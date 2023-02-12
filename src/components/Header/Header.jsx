@@ -43,7 +43,9 @@ const Header = () => {
               <Avatar
                 alt="Remy Sharp"
                 src={
-                  userImg ? `http://localhost:5000${userImg}` : default_avatar
+                  userImg
+                    ? `https://nice-pink-lapel.cyclic.app/${userImg}`
+                    : default_avatar
                 }
                 sx={{
                   cursor: "pointer",
