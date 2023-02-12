@@ -39,7 +39,7 @@ export const addFavorite = createAsyncThunk(
 
 // удаляем пост из избранного
 export const removeFavorite = createAsyncThunk(
-  "auth/addFavorite",
+  "auth/removeFavorite",
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("userToken");
@@ -123,15 +123,17 @@ export const userLogin = createAsyncThunk(
 export const registerUser = createAsyncThunk(
   "auth/register",
   // отправляем formData с введенными данными пользователя и выбранным аватаром
-  async (formData, { rejectWithValue }) => {
+  async ({ user_name, email, password, avatar }, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(
-        `${backendURL}/api/users/register`,
-        formData
-      );
+      const { data } = await axios.post(`${backendURL}/api/users/register`, {
+        user_name,
+        email,
+        password,
+        avatar,
+      });
       return data;
     } catch (error) {
-      // return custom error message from backend if present
+      // возвращаем ошибки с бэка
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
       } else {
@@ -166,7 +168,7 @@ export const editProfileUser = createAsyncThunk(
         return new Error("Токен авторизации не получен");
       }
     } catch (error) {
-      // return custom error message from backend if present
+      // возвращаем ошибки с бэка
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
       } else {

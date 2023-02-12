@@ -21,6 +21,7 @@ import {
 import { Button } from "@mui/joy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
+import EditIcon from "@mui/icons-material/Edit";
 
 // end UI
 import img from "../../assets/img/image.png";
@@ -309,9 +310,7 @@ const FullPost = () => {
           {loading ? (
             <Skeleton width="60%" />
           ) : (
-            <Box
-              sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}
-            >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography sx={{ marginRight: 1 }} variant="h5">
                 Автор:
               </Typography>
@@ -331,12 +330,22 @@ const FullPost = () => {
           )}
 
           <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+            <Button
+              startDecorator={<EditIcon />}
+              color="info"
+              size="md"
+              variant="soft"
+              onClick={() => navigate("/post/add-post")}
+            >
+              Изменить пост
+            </Button>
             {/* кнопка добавления в избранное */}
             <Button
               startDecorator={<BookmarksIcon />}
               color="success"
               size="md"
               variant="soft"
+              sx={{ marginLeft: 1 }}
               onClick={() => handleFavoritePost(currentPost._id)}
             >
               {handleChangeLabel(currentPost._id)}

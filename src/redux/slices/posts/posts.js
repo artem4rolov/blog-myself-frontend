@@ -1,6 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { getCommentsOfUser, getPosts, uploadImage } from "./postsActions";
+import {
+  getCommentsOfUser,
+  getPosts,
+  updatePost,
+  uploadImage,
+} from "./postsActions";
 import { getPostById } from "./postsActions";
 import { createPost } from "./postsActions";
 import { deletePost } from "./postsActions";
@@ -176,6 +181,22 @@ const postsSlice = createSlice({
       state.currentPost = null;
     },
     [createPost.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.refreshPosts = false;
+    },
+    // обновить пост (зависит от авторизации)
+    [updatePost.pending]: (state) => {
+      state.loading = true;
+      state.refreshPosts = false;
+      state.error = null;
+    },
+    [updatePost.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.refreshPosts = true;
+      state.newPost = payload;
+      state.currentPost = null;
+    },
+    [updatePost.rejected]: (state, { payload }) => {
       state.loading = false;
       state.refreshPosts = false;
     },

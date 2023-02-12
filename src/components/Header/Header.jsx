@@ -13,6 +13,10 @@ const Header = () => {
   const { loading, userEmail, userImg, error, successLogin } = useSelector(
     (state) => state.auth
   );
+  const { posts, refreshPosts, handleDeletePost, currentPost } = useSelector(
+    (state) => state.posts
+  );
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -75,11 +79,13 @@ const Header = () => {
         </Typography>
         {userEmail ? (
           <>
-            <Link to="post/add-post">
-              <Button variant="contained" size="small">
-                Создать пост
-              </Button>
-            </Link>
+            {!currentPost && (
+              <Link to="post/add-post">
+                <Button variant="outlined" size="small">
+                  Создать пост
+                </Button>
+              </Link>
+            )}
             <Link to="/login">
               <Button
                 size="small"

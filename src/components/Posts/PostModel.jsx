@@ -57,17 +57,17 @@ const PostModel = ({ post }) => {
   };
 
   // добавляем или удаляем пост из избранной коллекции пользователя
-  const handleFavoritePost = async (id) => {
+  const handleFavoritePost = (id) => {
     if (favoritePosts && favoritePosts.length > 0) {
       // ищем такой же id в массиве избранных постов пользователя
       const index = favoritePosts.indexOf(id);
       // если такой id уже есть - удаляем его из БД
       if (index !== -1) {
-        await dispatch(removeFavorite({ id }));
+        dispatch(removeFavorite({ id }));
         return;
       } else {
         // если такого id нет - добавляем его
-        await dispatch(addFavorite({ id }));
+        dispatch(addFavorite({ id }));
         return;
       }
     }

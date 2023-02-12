@@ -21,6 +21,9 @@ const theme = createTheme();
 const Registration = () => {
   // стейт для модалки
   const [open, setOpen] = React.useState(false);
+  // для предпросмотра аватара при регистрации
+  const [avatarPreview, setAvatarPreview] = React.useState(null);
+  // для загрузки на сервер (на бэке папка "uploads")
   const [imgUrl, setImgUrl] = React.useState(null);
 
   // достаем переменные из redux
@@ -32,26 +35,30 @@ const Registration = () => {
 
   const createAvatar = async (e) => {
     e.preventDefault();
-    // создаем специальный объект form Data для отправки на бэк
-    const formData = new FormData();
     // достаем файл из ивента
     const file = e.target.files[0];
-    // пихаем его в formData
-    formData.append("image", file);
-    // ждем загрузки на сервер и возвращаем новое имя файла (ссылку) для превью
-    // const data = await dispatch(uploadImageOnRegister(formData));
-    // достаем ссылку на превью
-    // const preview = data.payload.url;
-    // ставим новую ссылку в state для моментального отображения аватара пользователя
-    // setImgUrl(preview);
+    const reader = new FileReader();
+    const url = reader.readAsDataURL(file);
+    reader.onloadend = function (e) {
+      // для предпросмотра
+      setAvatarPreview(reader.result);
+    };
+    // для загрузки на сервер
+    setImgUrl(file.name);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     // отправляем на бэк объект со свойствами email и password и с соответствующими ключами
-    formData.append("avatar", imgUrl);
-    dispatch(registerUser(formData));
+    dispatch(
+      registerUser({
+        user_name: formData.get("user_name"),
+        email: formData.get("email"),
+        password: formData.get("password"),
+        avatar: `/uploads/${imgUrl}`,
+      })
+    );
   };
 
   // console.log(img);
@@ -109,10 +116,11 @@ const Registration = () => {
                 sx={{
                   m: 1,
                   bgcolor: "secondary.main",
-                  width: "100px",
-                  height: "100px",
+                  width: "200px",
+                  height: "200px",
                 }}
-                src={`http://localhost:5000${imgUrl}`}
+                // предпросмотр загруженного аватара
+                src={avatarPreview}
               >
                 <LockOutlinedIcon />
               </Avatar>

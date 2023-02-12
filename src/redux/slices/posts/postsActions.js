@@ -74,6 +74,32 @@ export const createPost = createAsyncThunk(
   }
 );
 
+export const updatePost = createAsyncThunk(
+  "posts/updatePost",
+  async ({ id, title, body, cover }) => {
+    try {
+      const token = localStorage.getItem("userToken");
+      if (token) {
+        const config = {
+          headers: {
+            token: `${token}`,
+          },
+        };
+        const { data } = await axios.patch(
+          `${backendURL}/api/posts/update/${id}`,
+          { id, title, body, cover },
+          config
+        );
+        return data;
+      } else {
+        return new Error("Токен авторизации не получен");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
 // получить все комменты конкретного поста
 export const getCommentsOfPost = createAsyncThunk(
   "posts/getCommentsOfPost",

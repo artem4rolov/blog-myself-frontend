@@ -15,7 +15,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost, uploadImage } from "../../redux/slices/posts/postsActions";
+import {
+  createPost,
+  updatePost,
+  uploadImage,
+} from "../../redux/slices/posts/postsActions";
 import { useNavigate } from "react-router-dom";
 
 // создаем правильную разметку будущего поста
@@ -36,7 +40,9 @@ const AddPost = () => {
   // стейт для заголовка
   const [title, setTitle] = useState("");
 
-  const { loading, error, newPost } = useSelector((state) => state.posts);
+  const { loading, error, newPost, currentPost } = useSelector(
+    (state) => state.posts
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -60,6 +66,20 @@ const AddPost = () => {
     setImgUrl(preview);
   };
 
+  React.useEffect(() => {
+    // редиректим, если пользователь уже вошел в систему (вдруг токен остался в localStorage)
+    if (!successLogin && !userEmail) {
+      navigate("/");
+    }
+  }, [successLogin, userEmail]);
+
+  useEffect(() => {
+    if (currentPost) {
+      setTitle(currentPost.title);
+      setImgUrl(currentPost.cover);
+    }
+  }, [currentPost]);
+
   useEffect(() => {
     let html = convertToHTML(editorState.getCurrentContent());
     setConvertedContent(html);
@@ -72,8 +92,21 @@ const AddPost = () => {
   }, [newPost, loading]);
 
   const handleCreate = () => {
+    if (currentPost) {
+      // обновляем пост
+      dispatch(
+        updatePost({
+          id: currentPost._id,
+          title,
+          body: convertedContent,
+          cover: imgUrl,
+        })
+      );
+      return;
+    }
     // отправляем на бэк объект со свойствами email и password и с соответствующими ключами
     dispatch(createPost({ title, body: convertedContent, cover: imgUrl }));
+
     // console.log(formData);
   };
 
@@ -94,6 +127,7 @@ const AddPost = () => {
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
             backgroundImage: `url(${
+              // если есть изображение текущего поста (значит мы нажали на кнопку изменить пост), соответственно выводим изображение, которое хотим изменить
               imgUrl ? `http://localhost:5000${imgUrl}` : null
             })`,
           }}
@@ -102,7 +136,10 @@ const AddPost = () => {
           {
             <img
               style={{ display: "none" }}
-              src={imgUrl ? `http://localhost:5000${imgUrl}` : null}
+              src={
+                // если есть изображение текущего поста (значит мы нажали на кнопку изменить пост), соответственно выводим изображение, которое хотим изменить
+                imgUrl ? `http://localhost:5000${imgUrl}` : null
+              }
               alt={title}
             />
           }
@@ -143,6 +180,7 @@ const AddPost = () => {
         placeholder="Заголовок вашего поста"
         fullWidth
         sx={{ fontSize: "24px", marginBottom: "20px" }}
+        // если есть текущий пост (значит мы нажали на редактирование поста), соответственно выводим данные поста, которые хотим изменить
         value={title}
         onInput={(e) => setTitle(e.target.value)}
       />
@@ -170,7 +208,11 @@ const AddPost = () => {
         sx={{ marginBottom: "20px", marginTop: "20px" }}
         onClick={() => handleCreate()}
       >
-        {loading ? "Секунду..." : "Добавить пост"}
+        {loading
+          ? "Секунду..."
+          : currentPost
+          ? "Обновить пост"
+          : "Добавить пост"}
       </Button>
     </Container>
   );
