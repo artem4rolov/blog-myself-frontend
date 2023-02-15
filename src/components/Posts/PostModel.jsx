@@ -128,7 +128,7 @@ const PostModel = ({ post }) => {
             <img
               src={
                 post.cover
-                  ? `https://nice-pink-lapel.cyclic.app/${post.cover}`
+                  ? `https://blog-myself-backend.onrender.com${post.cover}`
                   : default_post
               }
               loading="lazy"

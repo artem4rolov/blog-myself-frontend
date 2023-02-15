@@ -128,7 +128,9 @@ const AddPost = () => {
             backgroundPosition: "center",
             backgroundImage: `url(${
               // если есть изображение текущего поста (значит мы нажали на кнопку изменить пост), соответственно выводим изображение, которое хотим изменить
-              imgUrl ? `https://nice-pink-lapel.cyclic.app/${imgUrl}` : null
+              imgUrl
+                ? `https://blog-myself-backend.onrender.com${imgUrl}`
+                : null
             })`,
           }}
         >
@@ -138,7 +140,9 @@ const AddPost = () => {
               style={{ display: "none" }}
               src={
                 // если есть изображение текущего поста (значит мы нажали на кнопку изменить пост), соответственно выводим изображение, которое хотим изменить
-                imgUrl ? `https://nice-pink-lapel.cyclic.app/${imgUrl}` : null
+                imgUrl
+                  ? `https://blog-myself-backend.onrender.com${imgUrl}`
+                  : null
               }
               alt={title}
             />

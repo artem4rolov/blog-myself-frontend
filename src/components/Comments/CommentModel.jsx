@@ -51,7 +51,7 @@ const CommentModel = ({ comment }) => {
             alt="Remy Sharp"
             src={
               comment.userImg
-                ? `https://nice-pink-lapel.cyclic.app/${comment.userImg}`
+                ? `https://blog-myself-backend.onrender.com${comment.userImg}`
                 : "/static/images/avatar/1.jpg"
             }
           />

@@ -44,7 +44,7 @@ const Header = () => {
                 alt="Remy Sharp"
                 src={
                   userImg
-                    ? `https://nice-pink-lapel.cyclic.app/${userImg}`
+                    ? `https://blog-myself-backend.onrender.com${userImg}`
                     : default_avatar
                 }
                 sx={{

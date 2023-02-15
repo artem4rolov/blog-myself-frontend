@@ -244,7 +244,7 @@ const FullPost = () => {
               backgroundPosition: "center",
               backgroundImage: `url(${
                 currentPost.cover
-                  ? `https://nice-pink-lapel.cyclic.app/${currentPost.cover}`
+                  ? `https://blog-myself-backend.onrender.com${currentPost.cover}`
                   : default_post
               })`,
             }}

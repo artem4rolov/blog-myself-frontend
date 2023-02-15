@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // бэкенд по адресу
-const backendURL = "https://nice-pink-lapel.cyclic.app/";
+const backendURL = "https://blog-myself-backend.onrender.com";
 // const backendURL = "https://nice-pink-lapel.cyclic.app";
 
 // загрузка изображений
