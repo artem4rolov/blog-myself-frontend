@@ -330,15 +330,17 @@ const FullPost = () => {
           )}
 
           <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-            <Button
-              startDecorator={<EditIcon />}
-              color="info"
-              size="md"
-              variant="soft"
-              onClick={() => navigate("/post/add-post")}
-            >
-              Изменить пост
-            </Button>
+            {userName === currentPost.author && (
+              <Button
+                startDecorator={<EditIcon />}
+                color="info"
+                size="md"
+                variant="soft"
+                onClick={() => navigate("/post/add-post")}
+              >
+                Изменить пост
+              </Button>
+            )}
             {/* кнопка добавления в избранное */}
             <Button
               startDecorator={<BookmarksIcon />}
