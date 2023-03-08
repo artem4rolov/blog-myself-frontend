@@ -5,7 +5,12 @@
   <h3>Проект для создания и комментирования постов пользователей.</h3>
   <br/>
   <strong>Фронтенд</strong> (открывать нужно его, чтобы посмотреть на работу проекта) задеплоен по адресу: https://blog-myself-frontend.vercel.app/
+  <br/>
+  <strong>Репозиторй:</strong> https://github.com/artem4rolov/blog-myself-frontend
+  <br/>
   <strong>Бэкенд</strong> (можно поделать запросы, проверить работу сервера) задеплоен по адресу: https://blog-myself-backend.onrender.com/
+  <br/>
+  <strong>Репозиторй:</strong> https://github.com/artem4rolov/blog-myself-backend
   <br/>
   <br/>
   <h2>Основные возможности проекта:</h2>
